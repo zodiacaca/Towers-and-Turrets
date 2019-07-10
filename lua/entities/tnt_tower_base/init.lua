@@ -15,7 +15,7 @@ function ENT:SpawnFunction(ply, tr)
 	local skycheck = util.TraceLine(td)
 	if !skycheck.HitSky then
 		ply:EmitSound(Sound("buttons/button10.wav"))
-		ply:ChatPrint("Move to a clear place to spawn it.")
+		ply:ChatPrint("Not enough clearance above target position.")
 		return
 	end
 
@@ -31,17 +31,17 @@ function ENT:SpawnFunction(ply, tr)
 		return
 	end
 
-	local count = 0
-	for k,v in pairs(ents.GetAll()) do
-		if !(v:GetClass() == "tnt_towerbase") && v:GetClass() == self.Tower then
-			count = count + 1
-		end
-	end
-	if count >= 10 then
-		ply:EmitSound(Sound("buttons/button10.wav"))
-		ply:ChatPrint("Tower cap has been reached!")
-		return false
-	end
+	-- local count = 0
+	-- for k,v in pairs(ents.GetAll()) do
+	-- 	if !(v:GetClass() == "tnt_towerbase") && v:GetClass() == self.Tower then
+	-- 		count = count + 1
+	-- 	end
+	-- end
+	-- if count >= 10 then
+	-- 	ply:EmitSound(Sound("buttons/button10.wav"))
+	-- 	ply:ChatPrint("Maximum reached!")
+	-- 	return false
+	-- end
 
 	local Pos = tr.HitPos
 	if Pos.x >= 0 then
@@ -405,7 +405,7 @@ end
 local CT, target, p_target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, mul
+local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, clampDelta
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local attpos, attang
 local recoil, back
@@ -423,6 +423,7 @@ function ENT:Think()
 	end
 
 	CT = CurTime()
+	FT = FrameTime()
 
 	if self.TowerIdleSound != nil then
 		if self.LoopSound then
@@ -438,7 +439,7 @@ function ENT:Think()
 		end
 	end
 
-	self:TurningTurret(CT)
+	self:TurningTurret(CT, FT)
 	self:Recoil(CT)
 	self:ReloadAmmo(CT)
 
@@ -464,7 +465,7 @@ function ENT:UpdateTarget(ct, target)
 
 end
 
-function ENT:TurningTurret(ct)
+function ENT:TurningTurret(ct, ft)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
 
@@ -521,10 +522,10 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Acceleration
-		mul = math.sqrt(ct - self.ActivatedTime)
-		mul = math.Clamp(mul, 0, 1) * self.TurningSpeed * GetConVarNumber("host_timescale")
-		angdif_y.y = math.Clamp(angdif_y.y, -mul, mul)
-		angdif_p.x = math.Clamp(angdif_p.x, -mul, mul)
+		clampDelta = math.sqrt(ct - self.ActivatedTime)
+		clampDelta = math.Clamp(clampDelta, 0, 1) * self.AngularSpeed * GetConVarNumber("host_timescale")
+		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta)
+		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
@@ -660,6 +661,7 @@ function ENT:TurningSound(ct, angdif)
 	if self.TurningLoop then
 		if math.abs(p_angdif - angdif) > 0.1 then
 			self.TurningLoop:Play()
+			-- self.TurningLoop:ChangeVolume(math.Clamp(self.AccMulti, 0.5, 1))
 			self.TurningLoop:ChangePitch(100 * GetConVarNumber("host_timescale"))
 			self.LoopDelay = ct + 0.3
 		elseif  ct > self.LoopDelay then
