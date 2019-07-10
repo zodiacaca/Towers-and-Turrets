@@ -16,14 +16,14 @@ function ENT:SpawnFunction( ply, tr )
 		ply:ChatPrint("Turret cap has been reached!")
 		return false
 	end
-	
+
 	if ( !tr.Hit ) then return end
-	
+
 	local SpawnPos = tr.HitPos + tr.HitNormal * 10
 	local SpawnAng = ply:EyeAngles()
 	SpawnAng.p = 0
 	SpawnAng.y = SpawnAng.y + 180
-	
+
 	local ent = ents.Create( self.Turret )
 		ent:SetCreator( ply )
 		ent:SetPos( SpawnPos )
@@ -32,7 +32,7 @@ function ENT:SpawnFunction( ply, tr )
 	ent:Activate()
 
 	ent:DropToFloor()
-	
+
 	return ent
 end
 
@@ -42,16 +42,16 @@ end
 function ENT:Initialize()
 
 	self:PrecacheParticles()
-	
+
 	local model = (self.TurretModel)
-	
+
 	self.Entity:SetModel(model)
-	
+
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(false)
-	
+
 	local phys = self.Entity:GetPhysicsObject()
 	if phys:IsValid() then
 		-- phys:EnableGravity(false)
@@ -60,15 +60,15 @@ function ENT:Initialize()
 		-- phys:EnableDrag(false)
 		phys:Wake()
 	end
-	
+
 	self.Entity:SetUseType(SIMPLE_USE)
-	
+
 	self:SetHealth(self.TurretHealth)
-	
+
 	if self.SettleAngleRandom then
 		self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.AimYawBone), Angle(0, math.random(0,360), 0))
 	end
-	
+
 	self.ActivatedTime = CurTime()
 	self.LastTargetTime = CurTime()
 	self.LastShoot = CurTime()
@@ -83,7 +83,7 @@ function ENT:Initialize()
 	self:SetReady(true)
 	self.tOwner = self:GetCreator()
 	self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
-	
+
 	self:SetTrigger(true)	-- Touch
 
 end
@@ -129,23 +129,23 @@ end
 function ENT:OnTakeDamage(dmginfo)
 
 	if dmginfo:GetDamageType() ~= DMG_SLASH then
-	
+
 		local health = self:Health() - dmginfo:GetDamage()
 		health = math.Clamp(health, 0, 10000)
 		local dice = math.random(1,3)
-		
+
 		self:SetHealth(health)
-		
+
 		if (self:Health() <= 0.6 * self.TurretHealth) and (dmginfo:GetDamage() > 30) and (dice == 1) then
 			if self.Fires <= 3 then
 				self:DamageEffect()
 			end
 		end
-		
+
 		if (self:Health() <= 0) then
 			self:Explosion()
 		end
-		
+
 	end
 
 end
@@ -153,24 +153,24 @@ end
 function ENT:DamageEffect()
 
 	if !self.HasDamagedState then return end
-	
+
 	local a = 255 * (self:Health()/self.TurretHealth)
 	self:SetColor(Color(a, a, a, 255))
-	
+
 	local rpos = math.random(-self.FiresOffset,self.FiresOffset)
-	
+
 	self.FireEffect = ents.Create( "env_fire_trail" )
 	self.FireEffect:SetPos(self:GetPos() + (self:GetForward() * rpos) + (self:GetRight() * rpos) + (self:GetUp() * self.FiresHeight))
 	self.FireEffect:Spawn()
 	self.FireEffect:SetParent(self)
-	
+
 	if !self.FireSound then
 		self.FireSound = CreateSound(self, "ambient/fire/fire_big_loop1.wav")
 	else
 		self.FireSound:Play()
 		self.FireSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
 	end
-	
+
 	self.Fires = self.Fires + 1
 
 end
@@ -181,11 +181,11 @@ function ENT:Explosion()
 		self:Remove()
 		return
 	end
-	
+
 	if self.Explored then return end
-	
+
 	self.Explored = true
-	
+
 	self:Remove()
 
 end
@@ -206,7 +206,7 @@ local p_yaw = 0
 function ENT:Think()
 
 	CT = CurTime()
-	
+
 	if self.TowerIdleSound != nil then
 		if self.LoopSound then
 			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
@@ -220,36 +220,36 @@ function ENT:Think()
 			self.LoopSound:Play()
 		end
 	end
-	
+
 	self:TurningTurret(CT)
 	self:Recoil(CT)
-	
+
 	self:NextThink(CurTime())
-	
+
 	return true
 end
 
 function ENT:UpdateTarget(ct, target)
 
 	if (ct - self.LastTargetTime) > self.UpdateDelay and !self.TurningLoop:IsPlaying() then
-	
+
 		self.LastTargetTime = ct
-		
+
 		if target == self.OldTarget then
 			self.PlanB = !self.PlanB
 		end
-		
+
 		self.OldTarget = target
-		
+
 	end
-	
+
 end
 
 -- ENT.Time = 0
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
-	
+
 	-- if ct > self.Time then
 		-- self.Time = ct + 3
 		-- local tbl = {
@@ -262,21 +262,21 @@ function ENT:TurningTurret(ct)
 		-- }
 		-- PrintTable(tbl)
 	-- end
-	
+
 	if self.PlanB then
 		target = self:GetTargetB()
 	else
 		target = self:GetTargetA()
 	end
 	self:UpdateTarget(ct, target)
-	
+
 	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
-	
+
 		if p_target != target then
 			self.ActivatedTime = ct
 		end
 		p_target = target
-		
+
 		-- Prepare the bones
 		YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 		YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(YawBoneIndex)
@@ -284,7 +284,7 @@ function ENT:TurningTurret(ct)
 		PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(PitchBoneIndex)
 		YawBonePos, YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
 		PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
-		
+
 		-- Angles between the target and the bones
 		BoneIndexT = target:LookupBone(target:GetBoneName(1))
 		if BoneIndexT == nil then
@@ -302,11 +302,11 @@ function ENT:TurningTurret(ct)
 			self.PlanB = !self.PlanB
 			return
 		end
-		
+
 		-- The angle differences between them
 		angdif_y = ang_aim_y - YawBoneAng
 		angdif_p = ang_aim_p - PitchBoneAng
-		
+
 		-- Make sure the turret don't turn like a maniac
 		if math.abs(angdif_y.y) > 180 then
 			angdif_y.y = -angdif_y.y/math.abs(angdif_y.y) * (360 - math.abs(angdif_y.y))
@@ -314,27 +314,27 @@ function ENT:TurningTurret(ct)
 		if math.abs(angdif_p.x) > 180 then
 			angdif_p.x = -angdif_p.x/math.abs(angdif_p.x) * (360 - math.abs(angdif_p.x))
 		end
-		
+
 		-- Acceleration
 		mul = math.sqrt(ct - self.ActivatedTime)
-		mul = math.Clamp(mul, 0, 1) * self.TurningSpeed * GetConVarNumber("host_timescale")
+		mul = math.Clamp(mul, 0, 1) * self.AngularSpeed * GetConVarNumber("host_timescale")
 		angdif_y.y = math.Clamp(angdif_y.y, -mul, mul)
 		angdif_p.x = math.Clamp(angdif_p.x, -mul, mul)
-		
+
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
 		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + angdif_p.x, 0, 0))
 		-- print(angdif_p.x)
 		self:TurningSound(ct, angdif_y.y)
 		self:Aiming(ct)
-		
+
 	else
-	
+
 		self.ActivatedTime = ct
 		-- self:EliminateHesitation()
 		self.UpdateDelay = self.UpdateDelayShort
 		if self.TurningLoop then self.TurningLoop:Stop() end
-		
+
 	end
 
 end
@@ -342,14 +342,14 @@ end
 function ENT:TranslateCoordinateSystem(pos, ang)
 
 	newpos, newang = WorldToLocal(pos, ang, self.Entity:GetPos(), self.Entity:GetAngles())
-	
+
 	return newpos, newang
 end
 
 function ENT:EliminateHesitation()
 
 	local targets = {}
-	
+
 	-- the hesitation delay equals to the short update delay time, so use a small number like 0.5, and it's not so necessary so leave it in the comments
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && v:IsNPC() then
@@ -362,19 +362,19 @@ function ENT:EliminateHesitation()
 			end
 		end
 	end
-		
+
 	if table.Count(targets) == 1 and self.OldTarget != nil then
-	
+
 		self.UpdateDelay = 0
-		
+
 	end
-	
+
 end
 
 function ENT:GetTargetA()
 
 	local targets = {}
-	
+
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && (v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool())) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
@@ -391,25 +391,25 @@ function ENT:GetTargetA()
 			end
 		end
 	end
-	
+
 	if table.Count(targets) > 0 then
-	
+
 		if table.Count(targets) != 1 then
 			self.UpdateDelay = self.UpdateDelayLong
 		end
-		
+
 		table.SortByMember(targets, "health", true)
-		
+
 		return targets[1].ent
-		
+
 	end
-	
+
 end
 
 function ENT:GetTargetB()
 
 	local targets = {}
-	
+
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && (v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool())) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
@@ -426,40 +426,40 @@ function ENT:GetTargetB()
 			end
 		end
 	end
-	
+
 	if table.Count(targets) > 0 then
-	
+
 		table.SortByMember(targets, "health", true)
-		
+
 		if table.Count(targets) == 1 then
-		
+
 			if targets[1].ent != self.OldTarget then
-			
+
 				self.UpdateDelay = self.UpdateDelayLong
 				return targets[1].ent
-				
+
 			end
-			
+
 		elseif targets[1].ent != self.OldTarget then
-		
+
 			self.UpdateDelay = self.UpdateDelayLong
 			return targets[1].ent
-			
+
 		else
-		
+
 			self.UpdateDelay = self.UpdateDelayLong
 			return targets[2].ent
-			
+
 		end
-		
+
 	end
-	
+
 end
 
 function ENT:TurningSound(ct, angdif)
 
 	if self.TurretTurningSound == nil then return end
-	
+
 	if self.TurningLoop then
 		if math.abs(p_angdif - angdif) > 0.1 then
 			self.TurningLoop:Play()
@@ -484,12 +484,12 @@ function ENT:Aiming(ct)
 		print("AimAttachment expected, got nil")
 		return
 	end
-	
+
 	attpos = self.Entity:GetAttachment(self.AimAttachment).Pos
 	attang = self.Entity:GetAttachment(self.AimAttachment).Ang
-	
+
 	max = math.Clamp((ct - self.ActivatedTime)/2, 0, 1) * 16
-	
+
 	local td = {
 		start = attpos,
 		endpos = attpos + attang:Forward() * 33000,
@@ -498,7 +498,7 @@ function ENT:Aiming(ct)
 		filter = { self.Entity }
 		}
 	local tr = util.TraceHull(td)
-	
+
 	if (ct > (self.LastShoot + self.Cooldown)) then
 		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self.tOwner)) or GetConVar("tnt_attack_owner"):GetBool()) then
 			timer.Simple(0.001, function()
@@ -512,16 +512,16 @@ end
 function ENT:Shoot(ct, pos, ang)
 
 	if (self:GetRounds() >= self.TakeAmmoPerShoot) then
-	
+
 		self:SetRounds(self:GetRounds() - self.TakeAmmoPerShoot)
-		
+
 		local dice = math.Rand(0.9,1.15)
 		local damage = self.BlastDamage * self.DamageScale * dice
-		
+
 		self:MuzzleEffects(pos, ang)
 		self:EjectCasing(pos, ang)
 		util.ScreenShake(pos, 0.02 * damage, 0.05 * damage, 0.75, 2 * self.BlastRadius)
-		
+
 		local bullet = {}
 			bullet.Num 		= 1
 			bullet.Src 		= pos			-- Source
@@ -551,22 +551,22 @@ function ENT:Shoot(ct, pos, ang)
 					util.ScreenShake(tracedata.HitPos, 0.2 * damage, 1 * damage, 0.75, 1 * self.BlastRadius)
 				end
 			end
-			
+
 		self.Entity:FireBullets(bullet)
-		
+
 		sound.Play(self.TurretShootSound, pos, 100, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1 )
-		
+
 		local phys = self:GetPhysicsObject()
 		if ( IsValid( phys ) ) then phys:AddVelocity( -ang:Forward() * (0.6 * self.BlastDamage + 3 * self.HitDamage)) end
-		
+
 		self.LastShoot = ct
-		
+
 	else
-	
+
 		self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
 		self:SetRounds(self.ClipSize)
 		self.Entity:EmitSound(self.TurretReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
-	
+
 	end
 
 end
@@ -601,13 +601,13 @@ end
 function ENT:Recoil(ct)
 
 	if self.RecoilBone == nil then return end
-	
+
 	RecoilBoneIndex = self.Entity:LookupBone(self.RecoilBone)
 	RecoilBonePos, RecoilBoneAng = self.Entity:GetBonePosition(RecoilBoneIndex)
-	
+
 	recoil = (ct - self.LastShoot) * self.RecoilOffset
 	back = (self.RecoilOffset * 1/self.RecoilRecoverPerThink) - (ct - self.LastShoot - 1/self.RecoilRecoverPerThink) * (0.5 * self.RecoilOffset)
-	
+
 	if (ct - self.LastShoot) < (3 * 1/self.RecoilRecoverPerThink) then
 		if (ct - self.LastShoot) < 1/self.RecoilRecoverPerThink then
 			self.Entity:ManipulateBonePosition(RecoilBoneIndex, Vector(-recoil, 0, 0))

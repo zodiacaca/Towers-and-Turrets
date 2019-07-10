@@ -53,7 +53,7 @@ ENT.PitchLimitDown = 45
 ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = nil
 
-ENT.TurningSpeed = 35
+ENT.AngularSpeed = 35
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort = 0.5
