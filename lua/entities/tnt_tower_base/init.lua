@@ -403,7 +403,7 @@ function ENT:Explosion()
 
 end
 
-local CT, target, p_target
+local CT, target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
 local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, clampDelta
@@ -478,8 +478,6 @@ function ENT:TurningTurret(ct, ft)
 	self:UpdateTarget(ct, target)
 
 	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
-
-		p_target = target
 
 		-- Prepare the bones
 		YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)

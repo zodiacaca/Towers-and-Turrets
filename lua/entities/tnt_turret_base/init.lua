@@ -69,7 +69,8 @@ function ENT:Initialize()
 		self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.AimYawBone), Angle(0, math.random(0,360), 0))
 	end
 
-	self.ActivatedTime = CurTime()
+	self.YawMotorThrottle = 0
+	self.PitchMotorThrottle = 0
 	self.LastTargetTime = CurTime()
 	self.LastShoot = CurTime()
 	self.UpdateDelay = self.UpdateDelayLong
@@ -190,10 +191,10 @@ function ENT:Explosion()
 
 end
 
-local CT, target, p_target
+local CT, target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, mul
+local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, clampDelta
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local attpos, attang
 local recoil, back
@@ -206,6 +207,7 @@ local p_yaw = 0
 function ENT:Think()
 
 	CT = CurTime()
+	FT = FrameTime()
 
 	if self.TowerIdleSound != nil then
 		if self.LoopSound then
@@ -221,7 +223,7 @@ function ENT:Think()
 		end
 	end
 
-	self:TurningTurret(CT)
+	self:TurningTurret(CT, FT)
 	self:Recoil(CT)
 
 	self:NextThink(CurTime())
@@ -246,7 +248,7 @@ function ENT:UpdateTarget(ct, target)
 end
 
 -- ENT.Time = 0
-function ENT:TurningTurret(ct)
+function ENT:TurningTurret(ct, ft)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
 
@@ -271,11 +273,6 @@ function ENT:TurningTurret(ct)
 	self:UpdateTarget(ct, target)
 
 	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
-
-		if p_target != target then
-			self.ActivatedTime = ct
-		end
-		p_target = target
 
 		-- Prepare the bones
 		YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
@@ -315,11 +312,14 @@ function ENT:TurningTurret(ct)
 			angdif_p.x = -angdif_p.x/math.abs(angdif_p.x) * (360 - math.abs(angdif_p.x))
 		end
 
+		-- throttle
+		self.YawMotorThrottle = Lerp(ft * 5, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
+		self.PitchMotorThrottle = Lerp(ft * 5, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * 0.5), 0, 1))
+
 		-- Acceleration
-		mul = math.sqrt(ct - self.ActivatedTime)
-		mul = math.Clamp(mul, 0, 1) * self.AngularSpeed * GetConVarNumber("host_timescale")
-		angdif_y.y = math.Clamp(angdif_y.y, -mul, mul)
-		angdif_p.x = math.Clamp(angdif_p.x, -mul, mul)
+		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
+		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta) * self.YawMotorThrottle
+		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta) * 0.5 * self.PitchMotorThrottle
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
@@ -330,7 +330,8 @@ function ENT:TurningTurret(ct)
 
 	else
 
-		self.ActivatedTime = ct
+		self.YawMotorThrottle = 0
+		self.PitchMotorThrottle = 0
 		-- self:EliminateHesitation()
 		self.UpdateDelay = self.UpdateDelayShort
 		if self.TurningLoop then self.TurningLoop:Stop() end
@@ -461,18 +462,16 @@ function ENT:TurningSound(ct, angdif)
 	if self.TurretTurningSound == nil then return end
 
 	if self.TurningLoop then
-		if math.abs(p_angdif - angdif) > 0.1 then
+		if math.abs(p_angdif - angdif) > 0.05 then
 			self.TurningLoop:Play()
+			self.TurningLoop:ChangeVolume(math.Clamp(self.YawMotorThrottle, 0.35, 1))
 			self.TurningLoop:ChangePitch(100 * GetConVarNumber("host_timescale"))
 			self.LoopDelay = ct + 0.3
 		elseif  ct > self.LoopDelay then
 			self.TurningLoop:Stop()
-		else
-			self.ActivatedTime = ct
 		end
 	else
 		self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
-		self.ActivatedTime = ct
 	end
 	p_angdif = angdif
 
@@ -488,13 +487,13 @@ function ENT:Aiming(ct)
 	attpos = self.Entity:GetAttachment(self.AimAttachment).Pos
 	attang = self.Entity:GetAttachment(self.AimAttachment).Ang
 
-	max = math.Clamp((ct - self.ActivatedTime)/2, 0, 1) * 16
+	local max = 16
 
 	local td = {
 		start = attpos,
 		endpos = attpos + attang:Forward() * 33000,
-		maxs = Vector(max, max, 0),
-		mins = Vector(-max, -max, 0),
+		maxs = Vector(max, max, max),
+		mins = Vector(-max, -max, -max),
 		filter = { self.Entity }
 		}
 	local tr = util.TraceHull(td)
