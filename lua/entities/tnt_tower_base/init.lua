@@ -517,13 +517,14 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- throttle
-		self.YawMotorThrottle = Lerp(50, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
-		self.PitchMotorThrottle = Lerp(50, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * 0.5), 0, 1))
+		local ratio = 0.25
+		self.YawMotorThrottle = Lerp(0.2, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
+		self.PitchMotorThrottle = Lerp(0.2, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * ratio), 0, 1))
 
 		-- Acceleration
 		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
 		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta) * self.YawMotorThrottle
-		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta) * 0.5 * self.PitchMotorThrottle
+		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
