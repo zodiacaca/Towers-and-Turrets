@@ -104,9 +104,9 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Acceleration
-		mul = math.sqrt(ct - self.ActivatedTime) * self.AngularSpeed * GetConVarNumber("host_timescale")
-		angdif_y.y = math.Clamp(angdif_y.y, -mul, mul)
-		angdif_p.x = math.Clamp(angdif_p.x, -mul, mul)
+		local clampDelta = math.sqrt(ct - self.ActivatedTime) * self.AngularSpeed * GetConVarNumber("host_timescale")
+		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta)
+		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))

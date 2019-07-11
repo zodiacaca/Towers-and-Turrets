@@ -207,7 +207,6 @@ local p_yaw = 0
 function ENT:Think()
 
 	CT = CurTime()
-	FT = FrameTime()
 
 	if self.TowerIdleSound != nil then
 		if self.LoopSound then
@@ -223,7 +222,7 @@ function ENT:Think()
 		end
 	end
 
-	self:TurningTurret(CT, FT)
+	self:TurningTurret(CT)
 	self:Recoil(CT)
 
 	self:NextThink(CurTime())
@@ -248,7 +247,7 @@ function ENT:UpdateTarget(ct, target)
 end
 
 -- ENT.Time = 0
-function ENT:TurningTurret(ct, ft)
+function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
 
@@ -313,8 +312,8 @@ function ENT:TurningTurret(ct, ft)
 		end
 
 		-- throttle
-		self.YawMotorThrottle = Lerp(ft * 5, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
-		self.PitchMotorThrottle = Lerp(ft * 5, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * 0.5), 0, 1))
+		self.YawMotorThrottle = Lerp(50, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
+		self.PitchMotorThrottle = Lerp(50, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * 0.5), 0, 1))
 
 		-- Acceleration
 		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
