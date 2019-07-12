@@ -21,6 +21,7 @@ ENT.TowerReloadSound = Sound("tnt/cannon/tnt_cannon_reload1.wav")	-- Default lev
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
 ENT.MuzzleLightScale = 1
+ENT.TracerCount = 0
 
 ENT.ImpactParticle = "tnt_cannon_blast"
 ENT.ImpactEffect = nil

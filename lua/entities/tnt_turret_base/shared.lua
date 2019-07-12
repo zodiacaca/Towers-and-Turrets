@@ -21,6 +21,8 @@ ENT.TurretReloadSound = ""	-- Default level of the sound is 65
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
 ENT.MuzzleLightScale = 1
+ENT.TracerType = "LaserTracer"
+ENT.TracerCount = 1
 
 ENT.ImpactParticle = nil
 ENT.ImpactEffect = nil

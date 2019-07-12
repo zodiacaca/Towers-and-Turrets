@@ -21,6 +21,8 @@ ENT.TurretReloadSound = Sound("tnt/m60/m60_reload1.wav")	-- Default level of the
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
 ENT.MuzzleLightScale = 0.2
+ENT.TracerType = "Tracer"
+ENT.TracerCount = 5
 
 ENT.ImpactParticle = nil
 ENT.ImpactEffect = nil
@@ -53,7 +55,7 @@ ENT.PitchLimitDown = 85
 ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "bolt"
 
-ENT.AngularSpeed = 5
+ENT.AngularSpeed = 3.5
 ENT.ReloadSpeed = 0.1
 ENT.UpdateDelayLong = 2
 ENT.UpdateDelayShort = 0.5

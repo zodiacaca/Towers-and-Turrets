@@ -57,7 +57,7 @@ function ENT:Display()
 		cam.End3D2D()
 	elseif !self:GetReady() or GetConVar("ai_disabled"):GetBool() then
 		cam.Start3D2D(pos + offset_x, display_ang, 0.2)
-			draw.SimpleText("Deploying", "Default", 0, 0, Color(255, 0, 0, 255), 1, 1)
+			draw.SimpleText("Standby", "Default", 0, 0, Color(255, 0, 0, 255), 1, 1)
 		cam.End3D2D()
 	end
 

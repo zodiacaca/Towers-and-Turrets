@@ -13,6 +13,7 @@ ENT.TowerModel = "models/tnt/lightning_lv3.mdl"
 ENT.TowerIdleSound = Sound("S2_Lightning.Idle")
 
 ENT.AimAttachment = 1
+ENT.TracerCount = 0
 
 ENT.CanReload = true
 

@@ -62,7 +62,7 @@ function ENT:Display()
 		for k,v in pairs(display) do
 			cam.Start3D2D(self:GetPos() + self:GetUp() * 39.2 + v[1] * 36, v[2], 0.05)
 				local shade = (math.sin(CurTime() * 16) + 1.6) * 255
-				draw.SimpleText("Deploying", "TNT_Font", 0, 0, Color(255, 0, 0, shade), 1, 1)
+				draw.SimpleText("Standby", "TNT_Font", 0, 0, Color(255, 0, 0, shade), 1, 1)
 			cam.End3D2D()
 		end
 

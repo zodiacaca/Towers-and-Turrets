@@ -70,10 +70,11 @@ function ENT:Shoot(ct, pos, ang, t)
 				bullet.Src 		= self.Entity:GetAttachment(i+1).Pos			-- Source
 				bullet.Dir 		= self.Entity:GetAttachment(i+1).Ang:Forward()			-- Dir of bullet
 				bullet.Spread 	= Vector(self.Spread, self.Spread, 0)		-- Aim Cone
-				bullet.Tracer	= 0									-- Show a tracer on every x bullets3
+				bullet.Tracer	= self.TracerCount									-- Show a tracer on every x bullets3
 				bullet.Force	= self.HitDamage * 0.75									-- Amount of force to give to phys objects
 				bullet.Damage	= self.HitDamage * self.DamageScale * dice * damagemod
 				bullet.AmmoType = "Pistol"
+				bullet.TracerName = self.TracerType
 				bullet.Callback	= function(attacker, tracedata, dmginfo)
 					ParticleEffect(self.ImpactParticle, tracedata.HitPos, Angle(0, 0, 0), nil)
 					local Impact_Light = EffectData()
