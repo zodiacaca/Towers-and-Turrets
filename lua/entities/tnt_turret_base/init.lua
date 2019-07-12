@@ -194,12 +194,11 @@ end
 local CT, target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, angdif_y, angdif_p, newpos, newang, clampDelta
+local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, yBoneDiff, pBoneDiff, newpos, newang, clampDelta
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local attpos, attang
 local recoil, back
 local p_angdif = 0
-local p_yaw = 0
 
 /*---------------------------------------------------------
    Name: Think
@@ -300,32 +299,32 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- The angle differences between them
-		angdif_y = ang_aim_y - YawBoneAng
-		angdif_p = ang_aim_p - PitchBoneAng
+		yBoneDiff = ang_aim_y - YawBoneAng
+		pBoneDiff = ang_aim_p - PitchBoneAng
 
 		-- Make sure the turret don't turn like a maniac
-		if math.abs(angdif_y.y) > 180 then
-			angdif_y.y = -angdif_y.y/math.abs(angdif_y.y) * (360 - math.abs(angdif_y.y))
+		if math.abs(yBoneDiff.y) > 180 then
+			yBoneDiff.y = -yBoneDiff.y/math.abs(yBoneDiff.y) * (360 - math.abs(yBoneDiff.y))
 		end
-		if math.abs(angdif_p.x) > 180 then
-			angdif_p.x = -angdif_p.x/math.abs(angdif_p.x) * (360 - math.abs(angdif_p.x))
+		if math.abs(pBoneDiff.x) > 180 then
+			pBoneDiff.x = -pBoneDiff.x/math.abs(pBoneDiff.x) * (360 - math.abs(pBoneDiff.x))
 		end
 
 		-- throttle
 		local ratio = 0.25
-		self.YawMotorThrottle = Lerp(0.2, self.YawMotorThrottle, math.Clamp(math.abs(angdif_y.y) / self.AngularSpeed, 0, 1))
-		self.PitchMotorThrottle = Lerp(0.2, self.PitchMotorThrottle, math.Clamp(math.abs(angdif_p.x) / (self.AngularSpeed * ratio), 0, 1))
+		self.YawMotorThrottle = Lerp(0.2, self.YawMotorThrottle, math.Clamp(math.abs(yBoneDiff.y) / self.AngularSpeed, 0, 1))
+		self.PitchMotorThrottle = Lerp(0.2, self.PitchMotorThrottle, math.Clamp(math.abs(pBoneDiff.x) / (self.AngularSpeed * ratio), 0, 1))
 
 		-- Acceleration
 		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
-		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta) * self.YawMotorThrottle
-		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
+		yBoneDiff.y = math.Clamp(yBoneDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
+		pBoneDiff.x = math.Clamp(pBoneDiff.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
-		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + angdif_p.x, 0, 0))
-		-- print(angdif_p.x)
-		self:TurningSound(ct, angdif_y.y)
+		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yBoneDiff.y, 0))
+		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + pBoneDiff.x, 0, 0))
+		-- print(pBoneDiff.x)
+		self:TurningSound(ct, yBoneDiff.y)
 		self:Aiming(ct)
 
 	else
