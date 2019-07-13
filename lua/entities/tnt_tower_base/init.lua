@@ -405,11 +405,11 @@ end
 local CT, target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, yBoneDiff, pBoneDiff, newpos, newang, clampDelta
+local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, yawDiff, pitchDiff, newpos, newang, clampDelta
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local attpos, attang
 local recoil, back
-local p_angdif = 0
+local p_AngDiff = { y = 0, p = 0 }
 
 /*---------------------------------------------------------
    Name: Think
@@ -449,7 +449,7 @@ end
 function ENT:UpdateTarget(ct, target)
 
 	-- this target updating system is beyond my ability, it works and I don't really know the relationships between them
-	if (ct - self.LastTargetTime) > self.UpdateDelay and !self.TurningLoop:IsPlaying() then
+	if (ct - self.LastTargetTime) > self.UpdateDelay then
 
 		self.LastTargetTime = ct
 
@@ -503,32 +503,42 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- The angle differences between them
-		yBoneDiff = ang_aim_y - YawBoneAng
-		pBoneDiff = ang_aim_p - PitchBoneAng
+		yawDiff = ang_aim_y - YawBoneAng
+		pitchDiff = ang_aim_p - PitchBoneAng
 
 		-- Make sure the turret don't turn like a maniac
-		if math.abs(yBoneDiff.y) > 180 then
-			yBoneDiff.y = -yBoneDiff.y/math.abs(yBoneDiff.y) * (360 - math.abs(yBoneDiff.y))
+		if math.abs(yawDiff.y) > 180 then
+			yawDiff.y = -yawDiff.y/math.abs(yawDiff.y) * (360 - math.abs(yawDiff.y))
 		end
-		if math.abs(pBoneDiff.x) > 180 then
-			pBoneDiff.x = -pBoneDiff.x/math.abs(pBoneDiff.x) * (360 - math.abs(pBoneDiff.x))
+		if math.abs(pitchDiff.x) > 180 then
+			pitchDiff.x = -pitchDiff.x/math.abs(pitchDiff.x) * (360 - math.abs(pitchDiff.x))
 		end
 
 		-- throttle
 		local ratio = 0.25
-		self.YawMotorThrottle = Lerp(0.2, self.YawMotorThrottle, math.Clamp(math.abs(yBoneDiff.y) / self.AngularSpeed, 0, 1))
-		self.PitchMotorThrottle = Lerp(0.2, self.PitchMotorThrottle, math.Clamp(math.abs(pBoneDiff.x) / (self.AngularSpeed * ratio), 0, 1))
+		if p_AngDiff.y * yawDiff.y <= 0 then
+			self.YawMotorThrottle = 0
+		else
+			self.YawMotorThrottle = Lerp(0.1, self.YawMotorThrottle, math.Clamp(math.abs(yawDiff.y) / self.AngularSpeed, 0, 1))
+		end
+		if p_AngDiff.p * pitchDiff.p <= 0 then
+			self.PitchMotorThrottle = 0
+		else
+			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.AngularSpeed * ratio), 0, 1))
+		end
+		p_AngDiff.y = yawDiff.y
+		p_AngDiff.p = pitchDiff.p
+		-- print(_G)
 
-		-- Acceleration
 		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
-		yBoneDiff.y = math.Clamp(yBoneDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
-		pBoneDiff.x = math.Clamp(pBoneDiff.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
+		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
+		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yBoneDiff.y, 0))
-		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + pBoneDiff.x, 0, 0))
-		-- print(pBoneDiff.x)
-		self:TurningSound(ct, yBoneDiff.y)
+		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))
+		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + pitchDiff.x, 0, 0))
+		-- print(pitchDiff.x)
+		self:TurningSound(ct)
 		self:Aiming(ct, target)
 
 	else
@@ -652,12 +662,12 @@ function ENT:GetTargetB()
 
 end
 
-function ENT:TurningSound(ct, angdif)
+function ENT:TurningSound(ct)
 
 	if self.TowerTurningSound == nil then return end
 
 	if self.TurningLoop then
-		if p_angdif != angdif then
+		if p_AngDiff.y != yawDiff.y then
 			self.TurningLoop:Play()
 			self.TurningLoop:ChangeVolume(math.Clamp(self.YawMotorThrottle, 0.35, 1))
 			self.TurningLoop:ChangePitch(100 * GetConVarNumber("host_timescale"))
@@ -667,7 +677,6 @@ function ENT:TurningSound(ct, angdif)
 	else
 		self.TurningLoop = CreateSound(self.Entity, self.TowerTurningSound)
 	end
-	p_angdif = angdif
 
 end
 

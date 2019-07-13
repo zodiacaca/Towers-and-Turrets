@@ -33,14 +33,14 @@ ENT.CanReload = true
 
 ENT.TowerHealth = 600
 ENT.TowerRange = 1200
-ENT.HitDamage = 25
-ENT.BlastDamage = 45
+ENT.HitDamage = 20
+ENT.BlastDamage = 5
 ENT.BlastRadius = 128
 ENT.DamageScale = 1
 ENT.Spread = 0.002
-ENT.ClipSize = 30
+ENT.ClipSize = 60
 ENT.TakeAmmoPerShoot = 1
-ENT.Cooldown = 2
+ENT.Cooldown = 0.75
 
 ENT.AimYawBone = "Slave_Main"
 ENT.AimPitchBone = "Slave_Rotation_Upper"	-- These two bones can be the same bone or different like this one
