@@ -471,7 +471,7 @@ function ENT:TurningSound()
 	if self.TurningLoop then
 		if p_AngDiff.y != yawDiff.y then
 			self.TurningLoop:Play()
-			self.TurningLoop:ChangeVolume(math.Clamp(self.YawMotorThrottle, 0.35, 1))
+			self.TurningLoop:ChangeVolume(math.Clamp(self.YawMotorThrottle, 0.2, 1))
 			self.TurningLoop:ChangePitch(100 * GetConVarNumber("host_timescale"))
 		else
 			self.TurningLoop:Stop()
