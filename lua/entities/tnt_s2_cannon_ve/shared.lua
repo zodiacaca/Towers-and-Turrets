@@ -32,14 +32,14 @@ ENT.CanReload = false
 
 ENT.TurretHealth = 600
 ENT.TurretRange = 4000
-ENT.HitDamage = 30
-ENT.BlastDamage = 48
+ENT.HitDamage = 20
+ENT.BlastDamage = 5
 ENT.BlastRadius = 128
 ENT.DamageScale = 1
 ENT.Spread = 0.002
 ENT.ClipSize = 1
 ENT.TakeAmmoPerShoot = 0
-ENT.Cooldown = 2
+ENT.Cooldown = 0.75
 
 ENT.EjectEffect = nil
 ENT.EjectOffset = 0

@@ -538,7 +538,7 @@ function ENT:TurningTurret(ct)
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))
 		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + pitchDiff.x, 0, 0))
 		-- print(pitchDiff.x)
-		self:TurningSound(ct)
+		self:TurningSound()
 		self:Aiming(ct, target)
 
 	else
@@ -662,7 +662,7 @@ function ENT:GetTargetB()
 
 end
 
-function ENT:TurningSound(ct)
+function ENT:TurningSound()
 
 	if self.TowerTurningSound == nil then return end
 
