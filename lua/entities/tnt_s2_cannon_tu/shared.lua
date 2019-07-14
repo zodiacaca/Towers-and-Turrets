@@ -39,7 +39,7 @@ ENT.DamageScale = 1
 ENT.Spread = 0.002
 ENT.ClipSize = 1
 ENT.TakeAmmoPerShoot = 0
-ENT.Cooldown = 0.75
+ENT.Cooldown = 0.5
 
 ENT.EjectEffect = nil
 ENT.EjectOffset = 0

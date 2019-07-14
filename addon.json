@@ -1,0 +1,11 @@
+{
+	"title"		:	"Towers & Turrets",
+	"type"		:	"npc",
+	"tags"		:	[ "fun", "realism" ],
+	"ignore"	:
+	[
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}

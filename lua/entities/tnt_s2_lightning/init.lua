@@ -13,11 +13,11 @@ end
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
-	
+
 	target = self:GetTargetA()
-	
+
 	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
-	
+
 		if (ct > (self.LastShoot + self.Cooldown)) then
 			util.ParticleTracerEx("tnt_beam_up", self.Entity:GetPos(), self.Entity:GetAttachment(1).Pos, true, self.Entity:EntIndex(), 2)
 			if !self.Charged then
@@ -29,17 +29,22 @@ function ENT:TurningTurret(ct)
 				self.Charged = false
 			end
 		end
-		
+
 	end
 
 end
 
+local catchThem = {
+	"rpg_missile",
+	"npc_grenade_frag"
+}
+
 function ENT:GetTargetA()
 
 	local targets = {}
-	
+
 	for k,v in pairs(ents.GetAll()) do
-		if v:IsValid() && (v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.tOwner) then
+		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.tOwner) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.find(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TowerRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
@@ -50,15 +55,15 @@ function ENT:GetTargetA()
 			end
 		end
 	end
-	
+
 	if table.Count(targets) >= 1 then
-	
+
 		table.SortByMember(targets, "health", false)
-		
+
 		return targets[1].ent
-		
+
 	end
-	
+
 end
 
 function ENT:Shoot(ct, t)
@@ -66,16 +71,16 @@ function ENT:Shoot(ct, t)
 	if (self:GetRounds() >= self.TakeAmmoPerShoot) then
 
 		self:SetRounds(self:GetRounds() - self.TakeAmmoPerShoot)
-		
+
 		local tower = self.Entity
 		local pos = self.Entity:GetPos()
 		local apos = self.Entity:GetAttachment(1).Pos
 		local tpos = t:GetPos() + Vector(0, 0, 0.6 * t:OBBMaxs().z)
 		local damage = self.HitDamage * self.DamageScale * math.Rand(0.9,1.3)
 		local normal = (tpos - tower:GetAttachment(1).Pos):GetNormal()
-		
+
 		util.ParticleTracerEx("tnt_beam", pos, tpos, true, tower:EntIndex(), self.AimAttachment)
-		
+
 		if IsValid(t) then
 			local Muzzle_Light = EffectData()
 				Muzzle_Light:SetOrigin(apos)
@@ -100,7 +105,7 @@ function ENT:Shoot(ct, t)
 						if v:IsLineOfSightClear(tpos) then
 							timer.Simple(0.1, function()
 							local dmg2 = DamageInfo()
-								dmg2:SetDamageType(DMG_SHOCK)	
+								dmg2:SetDamageType(DMG_SHOCK)
 								dmg2:SetDamage(damage * 0.5)
 								dmg2:SetAttacker(tower)
 								dmg2:SetInflictor(tower)
@@ -125,11 +130,11 @@ function ENT:Shoot(ct, t)
 					end
 				end
 			end
-			
+
 		end
-		
+
 		self.LastShoot = ct
-		
+
 	end
 
 end
@@ -138,10 +143,10 @@ function ENT:Recoil(ct)
 
 	RecoilBoneIndex = self.Entity:LookupBone(self.RecoilBone)
 	RecoilBonePos, RecoilBoneAng = self.Entity:GetBonePosition(RecoilBoneIndex)
-	
+
 	recoil = (ct - self.LastShoot) * self.RecoilOffset * 2 + 1
 	back = (self.RecoilOffset * 1/self.RecoilRecoverPerThink) - (ct - self.LastShoot - 1/self.RecoilRecoverPerThink) * (0.5 * self.RecoilOffset) * 2 + 1
-	
+
 	if (ct - self.LastShoot) < (3 * 1/self.RecoilRecoverPerThink) then
 		if (ct - self.LastShoot) < 1/self.RecoilRecoverPerThink then
 			self.Entity:ManipulateBoneScale(RecoilBoneIndex, Vector(-recoil, -recoil, -recoil))

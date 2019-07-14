@@ -85,7 +85,8 @@ end
    Name: Initialize
 ---------------------------------------------------------*/
 function ENT:Initialize()
-
+	-- print(table.Count(_G))
+	-- save
 	self:PrecacheParticles()
 
 	local model = (self.TowerModel)
@@ -528,7 +529,6 @@ function ENT:TurningTurret(ct)
 		end
 		p_AngDiff.y = yawDiff.y
 		p_AngDiff.p = pitchDiff.p
-		-- print(_G)
 
 		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale")
 		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
