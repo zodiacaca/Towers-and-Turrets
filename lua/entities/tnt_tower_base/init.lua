@@ -85,8 +85,7 @@ end
    Name: Initialize
 ---------------------------------------------------------*/
 function ENT:Initialize()
-	-- print(table.Count(_G))
-	-- save
+
 	self:PrecacheParticles()
 
 	local model = (self.TowerModel)

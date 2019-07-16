@@ -8,7 +8,7 @@ ENT.Spawnable			= false
 ENT.AdminSpawnable	= false
 ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
-ENT.DoNotDuplicate = true
+-- ENT.DoNotDuplicate = true
 
 ENT.Tower = ""
 ENT.TowerModel = ""
