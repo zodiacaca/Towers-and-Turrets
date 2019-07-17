@@ -72,7 +72,7 @@ function ENT:SpawnFunction(ply, tr)
 	end
 
 	local ent = ents.Create(self.Tower)
-
+	ent:SetCreator(ply)
 	ent:SetPos(Pos + Vector(0, 0, 3600))
 	ent:SetAngles(Angle(0, 0, 0))
 	ent:Spawn()
@@ -135,7 +135,7 @@ function ENT:Initialize()
 	self.Explored = false
 	self.PlanB = false
 	self:SetReady(false)
-	self.tOwner = self:GetCreator()
+	self.Owner = self:GetCreator()
 	self.TurningLoop = CreateSound(self.Entity, self.TowerTurningSound)
 
 	self:SetTrigger(true)	-- Touch
@@ -701,7 +701,7 @@ function ENT:Aiming(ct, t)
 	local tr = util.TraceHull(td)
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
-		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self.tOwner)) or GetConVar("tnt_attack_owner"):GetBool()) then
+		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self:Owner)) or GetConVar("tnt_attack_owner"):GetBool()) then
 			timer.Simple(0.001, function()
 				self:Shoot(ct, attpos, attang, t)
 			end)

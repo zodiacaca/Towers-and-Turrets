@@ -43,8 +43,8 @@ function ENT:Initialize()
 	self.Explored = false
 	self.PlanB = false
 	self:SetReady(true)
-	self.tOwner = self:GetCreator()
-	self:SetTurretOwner(self.tOwner)
+	self.Owner = self:GetCreator()
+	self:SetTurretOwner(self.Owner)
 
 	self:SetTrigger(true)	-- Touch
 
@@ -53,9 +53,9 @@ end
 function ENT:GetTracer()
 
 	local td = {}
-		td.start = self.tOwner:EyePos() + self.tOwner:EyeAngles():Forward() * 256
-		td.endpos = td.start + self.tOwner:EyeAngles():Forward() * 30000
-		td.filter = { self.Entity, self.tOwner }
+		td.start = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 256
+		td.endpos = td.start + self.Owner:EyeAngles():Forward() * 30000
+		td.filter = { self.Entity, self.Owner }
 	local tr = util.TraceLine(td)
 
 	return tr
@@ -65,7 +65,7 @@ local p_aimpos = Vector(0, 0, 0)
 
 function ENT:TurningTurret(ct)
 
-	if (self:GetReady() == true) and self.tOwner:IsValid() and self.tOwner:InVehicle() then
+	if (self:GetReady() == true) and self.Owner:IsValid() and self.Owner:InVehicle() then
 
 		-- Prepare the bones
 		YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
@@ -154,7 +154,7 @@ function ENT:Aiming(ct)
 	attang = self.Entity:GetAttachment(self.AimAttachment).Ang
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
-		if self.tOwner:KeyDown(GetConVarNumber("tnt_turret_fire")) then
+		if self.Owner:KeyDown(GetConVarNumber("tnt_turret_fire")) then
 			self:Shoot(ct, attpos, attang)
 		end
 	end
