@@ -24,7 +24,7 @@ local function tnt_panel()
 	Frame:SetDraggable( true )
 	Frame:ShowCloseButton( true )
 	Frame:MakePopup()
-	
+
 	List = vgui.Create( "DListView", Frame )
 	List:SetPos( 25, 50 )
 	List:SetSize( 250, 300 )
@@ -33,7 +33,7 @@ local function tnt_panel()
 	for k, v in pairs( f_list ) do
 		List:AddLine( v )
 	end
-	
+
 	local Button = vgui.Create( "DButton", Frame )
 	Button:SetText( "Refresh List" )
 	Button:SetTextColor( Color( 0, 0, 0 ) )
@@ -71,14 +71,14 @@ local function TNT2Options(panel)
 		RunConsoleCommand("tnt_turret_fire", data)
 	end
 	panel:AddItem(ComboBox)
-	
+
 	panel:AddControl( "CheckBox", { Label = "Attack players ? (*)", Command = "tnt_attack_player" } )
-	
+
 	panel:AddControl( "CheckBox", { Label = "Attack the owner ? (*)", Command = "tnt_attack_owner" } )
 
 end
 
 function TNTAddOptions()
-	spawnmenu.AddToolMenuOption("Utilities", "Towers N Turrets", "TNTOptions", "Settings", "", "", TNT2Options)
+	spawnmenu.AddToolMenuOption("Utilities", "Towers and Turrets", "TNTOptions", "Settings", "", "", TNT2Options)
 end
 hook.Add("PopulateToolMenu", "TNTAddOptions", TNTAddOptions)

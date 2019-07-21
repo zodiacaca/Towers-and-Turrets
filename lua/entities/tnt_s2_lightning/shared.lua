@@ -2,7 +2,7 @@
 ENT.Type 			= "anim"
 ENT.Base 			= "tnt_tower_base"
 ENT.PrintName	= "Lightning Tower"
-ENT.Category		= "Towers N Turrets"
+ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true

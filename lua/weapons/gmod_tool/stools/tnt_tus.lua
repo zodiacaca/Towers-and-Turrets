@@ -1,5 +1,5 @@
 
-TOOL.Category = "Towers N Turrets"
+TOOL.Category = "Towers and Turrets"
 TOOL.Name = "Turrets' Statistics"
 
 TOOL.ClientConVar[ "scale" ] = "1"
@@ -16,7 +16,7 @@ TOOL.Information = {
 }
 
 if CLIENT then
-	
+
 	language.Add( "tool.tnt_tus.name", "Turrets' Statistics" )
 	language.Add( "tool.tnt_tus.desc", "Set the properties of turrets" )
 	language.Add( "tool.tnt_tus.left", "Set a turret to these statistics" )
@@ -29,37 +29,37 @@ end
 function TOOL:LeftClick( trace )
 
 	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_turret_base" then return false end
-	
+
 	if ( CLIENT ) then return true end
-	
+
 	local ds = self:GetClientNumber( "scale" )
 	local s = self:GetClientNumber( "spread" )
 	local r = self:GetClientNumber( "range" )
 	local cd = self:GetClientNumber( "cooldown" )
 	local br = self:GetClientNumber( "br" )
-	
+
 	trace.Entity:SetDamageScale( ds )
 	trace.Entity:SetSpread( s )
 	trace.Entity:SetTurretRange( r )
 	trace.Entity:SetCooldown( cd )
 	trace.Entity:SetBlastRadius( br )
-	
+
 	return true
 end
 
 function TOOL:RightClick( trace )
 
 	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_turret_base" then return false end
-	
+
 	if ( CLIENT ) then return true end
-	
+
 	local ds  = trace.Entity.DamageScale
 	local s  = trace.Entity.Spread * 10
 	local r  = trace.Entity.TurretRange
 	local cd  = trace.Entity.Cooldown
 	local br  = trace.Entity.BlastRadius
 	local ready  = tostring(trace.Entity:GetReady())
-	
+
 	self:GetOwner():ChatPrint( "Turret Ready is "..ready.."" )
 	self:GetOwner():ChatPrint( "Damage Scale: "..ds.."" )
 	self:GetOwner():ChatPrint( "Spread(*10): "..s.."" )
@@ -71,7 +71,7 @@ function TOOL:RightClick( trace )
 	self:GetOwner():ConCommand( "tnt_tus_range "..r )
 	self:GetOwner():ConCommand( "tnt_tus_cooldown "..cd )
 	self:GetOwner():ConCommand( "tnt_tus_br "..br )
-	
+
 	return true
 end
 
@@ -82,18 +82,18 @@ function TOOL:Reload( trace )
 	if ( SERVER ) then
 
 		if self:GetOwner():KeyDown(IN_USE) then
-		
+
 			for k,v in pairs(ents.GetAll()) do
 				if v.Base == "tnt_turret_base" then
 					v:SetReady(stat)
 				end
 			end
 			stat = !stat
-			
+
 		else
-			
+
 			if !trace.Entity:IsValid() then return false end
-			
+
 			if trace.Entity:IsNPC() then
 				self.TracerEntity[1] = trace.Entity
 			elseif self.TracerEntity[1] != nil then
@@ -104,11 +104,11 @@ function TOOL:Reload( trace )
 			else
 				return false
 			end
-			
+
 		end
-		
+
 	end
-	
+
 	return true
 end
 

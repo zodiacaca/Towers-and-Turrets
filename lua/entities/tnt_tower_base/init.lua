@@ -701,7 +701,7 @@ function ENT:Aiming(ct, t)
 	local tr = util.TraceHull(td)
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
-		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self:Owner)) or GetConVar("tnt_attack_owner"):GetBool()) then
+		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self.Owner)) or GetConVar("tnt_attack_owner"):GetBool()) then
 			timer.Simple(0.001, function()
 				self:Shoot(ct, attpos, attang, t)
 			end)

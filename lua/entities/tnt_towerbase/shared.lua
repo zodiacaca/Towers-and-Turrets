@@ -2,13 +2,13 @@
 ENT.Type 			= "anim"
 ENT.Base 			= "tnt_tower_base"
 ENT.PrintName	= "Tower Base"
-ENT.Category		= "Towers N Turrets"
+ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = false
 ENT.AdminOnly = false
-ENT.DoNotDuplicate = true
+ENT.DoNotDuplicate = false
 
 ENT.Tower = "tnt_towerbase"
 ENT.TowerModel = "models/tnt/tower_base.mdl"

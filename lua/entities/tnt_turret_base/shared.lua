@@ -2,13 +2,13 @@
 ENT.Type 			= "anim"
 ENT.Base 			= "base_anim"
 ENT.PrintName	= "tnt_turret_base"
-ENT.Category		= "Towers N Turrets"
+ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= false
 ENT.AdminSpawnable	= false
 ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
--- ENT.DoNotDuplicate = true
+ENT.DoNotDuplicate = false
 
 ENT.Turret = ""
 ENT.TurretModel = ""

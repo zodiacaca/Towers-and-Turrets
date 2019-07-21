@@ -1,5 +1,5 @@
 
-TOOL.Category = "Towers N Turrets"
+TOOL.Category = "Towers and Turrets"
 TOOL.Name = "Towers' Statistics"
 
 TOOL.ClientConVar[ "scale" ] = "1"
@@ -17,7 +17,7 @@ TOOL.Information = {
 }
 
 if CLIENT then
-	
+
 	language.Add( "tool.tnt_tos.name", "Towers' Statistics" )
 	language.Add( "tool.tnt_tos.desc", "Set the properties of towers" )
 	language.Add( "tool.tnt_tos.left", "Set a tower to these statistics" )
@@ -30,39 +30,39 @@ end
 function TOOL:LeftClick( trace )
 
 	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_tower_base" then return false end
-	
+
 	if ( CLIENT ) then return true end
-	
+
 	local ds = self:GetClientNumber( "scale" )
 	local s = self:GetClientNumber( "spread" )
 	local r = self:GetClientNumber( "range" )
 	local cd = self:GetClientNumber( "cooldown" )
 	local br = self:GetClientNumber( "br" )
 	local taps = self:GetClientNumber( "taps" )
-	
+
 	trace.Entity:SetDamageScale( ds )
 	trace.Entity:SetSpread( s )
 	trace.Entity:SetTowerRange( r )
 	trace.Entity:SetCooldown( cd )
 	trace.Entity:SetBlastRadius( br )
 	trace.Entity:SetTakeAmmoPerShoot( taps )
-	
+
 	return true
 end
 
 function TOOL:RightClick( trace )
 
 	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_tower_base" then return false end
-	
+
 	if ( CLIENT ) then return true end
-	
+
 	local ds  = trace.Entity.DamageScale
 	local s  = trace.Entity.Spread * 10
 	local r  = trace.Entity.TowerRange
 	local cd  = trace.Entity.Cooldown
 	local br  = trace.Entity.BlastRadius
 	local taps  = trace.Entity.TakeAmmoPerShoot
-	
+
 	self:GetOwner():ChatPrint( "Damage Scale: "..ds.."" )
 	self:GetOwner():ChatPrint( "Spread(*10): "..s.."" )
 	self:GetOwner():ChatPrint( "Range: "..r.."" )
@@ -75,7 +75,7 @@ function TOOL:RightClick( trace )
 	self:GetOwner():ConCommand( "tnt_tos_cooldown "..cd )
 	self:GetOwner():ConCommand( "tnt_tos_br "..br )
 	self:GetOwner():ConCommand( "tnt_tos_taps "..taps )
-	
+
 	return true
 end
 
@@ -84,20 +84,20 @@ local stat = false
 function TOOL:Reload( trace )
 
 	if ( SERVER ) then
-	
+
 		if self:GetOwner():KeyDown(IN_USE) then
-		
+
 			for k,v in pairs(ents.GetAll()) do
 				if v.Base == "tnt_tower_base" then
 					v:SetReady(stat)
 				end
 			end
 			stat = !stat
-			
+
 		else
-	
+
 			if !trace.Entity:IsValid() then return false end
-			
+
 			if trace.Entity:IsNPC() then
 				self.TracerEntity[1] = trace.Entity
 			elseif self.TracerEntity[1] != nil then
@@ -108,11 +108,11 @@ function TOOL:Reload( trace )
 			else
 				return false
 			end
-			
+
 		end
-		
+
 	end
-	
+
 	return true
 end
 

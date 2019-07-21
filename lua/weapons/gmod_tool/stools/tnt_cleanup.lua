@@ -1,6 +1,6 @@
 
 
-TOOL.Category = "Towers N Turrets"
+TOOL.Category = "Towers and Turrets"
 TOOL.Name = "[Cleanup]"
 
 TOOL.Information = {
@@ -9,7 +9,7 @@ TOOL.Information = {
 }
 
 if CLIENT then
-	
+
 	language.Add( "tool.tnt_cleanup.name", "Cleanup" )
 	language.Add( "tool.tnt_cleanup.desc", "" )
 	language.Add( "tool.tnt_cleanup.left_use", "Remove all the towers" )
@@ -20,12 +20,12 @@ end
 function TOOL:LeftClick( trace )
 
 	if ( CLIENT ) or !self:GetOwner():KeyDown(IN_USE) then return end
-	
+
 	if !self:GetOwner():IsAdmin() then
 		self:GetOwner():ChatPrint("You need to be an admin to use this tool.")
 		return
 	end
-	
+
 	local Selected = 0
 	for k,v in pairs(ents.GetAll()) do
 		if v.Base == "tnt_tower_base" then
@@ -34,19 +34,19 @@ function TOOL:LeftClick( trace )
 		end
 	end
 	self:GetOwner():PrintMessage( HUD_PRINTTALK, "".. Selected .." towers were removed." )
-	
+
 	return true
 end
 
 function TOOL:RightClick( trace )
 
 	if ( CLIENT ) or !self:GetOwner():KeyDown(IN_USE) then return end
-	
+
 	if !self:GetOwner():IsAdmin() then
 		self:GetOwner():ChatPrint("You need to be an admin to use this tool.")
 		return
 	end
-	
+
 	local Selected = 0
 	for k,v in pairs(ents.GetAll()) do
 		if v.Base == "tnt_turret_base" then
@@ -55,7 +55,7 @@ function TOOL:RightClick( trace )
 		end
 	end
 	self:GetOwner():PrintMessage( HUD_PRINTTALK, "".. Selected .." turrets were removed." )
-	
+
 	return true
 end
 
@@ -68,15 +68,15 @@ function TOOL:DoRemoveEntity(ent)
 
 	-- Remove all constraints (this stops ropes from hanging around)
 	constraint.RemoveAll( ent )
-	
+
 	-- Remove it properly in 1 second
 	timer.Simple( 1, function() if ( IsValid( ent ) ) then ent:Remove() end end )
-	
+
 	-- Make it non solid
 	ent:SetNotSolid( true )
 	ent:SetMoveType( MOVETYPE_NONE )
 	ent:SetNoDraw( true )
-	
+
 	-- Send Effect
 	local ed = EffectData()
 	ed:SetEntity( ent )

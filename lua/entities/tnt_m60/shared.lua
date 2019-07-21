@@ -2,13 +2,13 @@
 ENT.Type 			= "anim"
 ENT.Base 			= "tnt_turret_base"
 ENT.PrintName	= "M60 Turret"
-ENT.Category		= "Towers N Turrets"
+ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = true
 ENT.AdminOnly = true
-ENT.DoNotDuplicate = true
+ENT.DoNotDuplicate = false
 
 ENT.Turret = "tnt_m60"
 ENT.TurretModel = "models/tnt/m60_turret.mdl"

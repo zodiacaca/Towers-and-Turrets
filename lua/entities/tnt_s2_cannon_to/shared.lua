@@ -2,13 +2,13 @@
 ENT.Type 			= "anim"
 ENT.Base 			= "tnt_tower_base"
 ENT.PrintName	= "Cannon Tower"
-ENT.Category		= "Towers N Turrets"
+ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
-ENT.DoNotDuplicate = true
+ENT.DoNotDuplicate = false
 
 ENT.Tower = "tnt_s2_cannon_to"
 ENT.TowerModel = "models/tnt/cannon_lv3.mdl"
