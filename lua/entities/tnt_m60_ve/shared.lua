@@ -29,7 +29,7 @@ ENT.ImpactEffect = nil
 ENT.ImpactScale = 0
 
 ENT.SettleAngleRandom = false
-ENT.CanReload = false
+ENT.CanReload = true	-- not used, only literal meaning here
 
 ENT.TurretHealth = 300
 ENT.TurretRange = 4000
@@ -38,8 +38,8 @@ ENT.BlastDamage = 0
 ENT.BlastRadius = 0
 ENT.DamageScale = 1
 ENT.Spread = 0.01
-ENT.ClipSize = 1
-ENT.TakeAmmoPerShoot = 0
+ENT.ClipSize = 200
+ENT.TakeAmmoPerShoot = 1
 ENT.Cooldown = 0.1
 
 ENT.EjectEffect = "RifleShellEject"
@@ -56,7 +56,7 @@ ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "bolt"
 
 ENT.AngularSpeed = 3
-ENT.ReloadSpeed = 0
+ENT.ReloadSpeed = 0.1
 
 ENT.RecoilOffset = 80
 ENT.RecoilRecoverPerThink = 20 -- Use a number that the result of 1 divide this number is still a rational number

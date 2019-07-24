@@ -39,6 +39,7 @@ function ENT:Initialize()
 	self.ActivatedTime = CurTime()
 	self.LastShoot = CurTime()
 	self:SetRounds(self.ClipSize)
+	self.Reloaded = true
 	self:SetReloadTime(CurTime())
 	self.LoopDelay = 0
 	self.Fires = 0
@@ -68,7 +69,8 @@ local p_aimpos = Vector(0, 0, 0)
 
 function ENT:TurningTurret(ct)
 
-	if (self:GetReady() == true) and self.Owner:IsValid() and self.Owner:InVehicle() then
+	self:ReloadAmmo(ct)
+	if (self:GetReady() == true) and self.Owner:IsValid() and self.Owner:InVehicle() and (ct > self:GetReloadTime()) then
 
 		-- Prepare the bones
 		YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
@@ -109,7 +111,7 @@ function ENT:TurningTurret(ct)
 		-- Acceleration
 		local clampDelta = math.sqrt(ct - self.ActivatedTime) * self.AngularSpeed * GetConVarNumber("host_timescale")
 		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta)
-		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta)
+		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta * 0.4, clampDelta * 0.4)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
@@ -160,6 +162,16 @@ function ENT:Aiming(ct)
 		if self.Owner:KeyDown(GetConVarNumber("tnt_turret_fire")) then
 			self:Shoot(ct, attpos, attang)
 		end
+	end
+
+end
+
+function ENT:ReloadAmmo(ct)
+
+	if !self.Reloaded and (ct > self:GetReloadTime()) then
+		self:SetRounds(self.ClipSize)
+		self.Reloaded = true
+		self.ActivatedTime = ct
 	end
 
 end
