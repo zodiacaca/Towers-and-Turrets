@@ -92,25 +92,25 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- The angle differences between them
-		angdif_y = ang_aim_y - YawBoneAng
-		angdif_p = ang_aim_p - PitchBoneAng
+		yawDiff = ang_aim_y - YawBoneAng
+		pitchDiff = ang_aim_p - PitchBoneAng
 
 		-- Make sure the turret don't turn like a maniac
-		if math.abs(angdif_y.y) > 180 then
-			angdif_y.y = -angdif_y.y/math.abs(angdif_y.y) * (360 - math.abs(angdif_y.y))
+		if math.abs(yawDiff.y) > 180 then
+			yawDiff.y = -yawDiff.y/math.abs(yawDiff.y) * (360 - math.abs(yawDiff.y))
 		end
-		if math.abs(angdif_p.x) > 180 then
-			angdif_p.x = -angdif_p.x/math.abs(angdif_p.x) * (360 - math.abs(angdif_p.x))
+		if math.abs(pitchDiff.x) > 180 then
+			pitchDiff.x = -pitchDiff.x/math.abs(pitchDiff.x) * (360 - math.abs(pitchDiff.x))
 		end
 
 		-- Acceleration
 		local clampDelta = math.sqrt(ct - self.ActivatedTime) * self.AngularSpeed * GetConVarNumber("host_timescale")
-		angdif_y.y = math.Clamp(angdif_y.y, -clampDelta, clampDelta)
-		angdif_p.x = math.Clamp(angdif_p.x, -clampDelta, clampDelta)
+		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta)
+		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta)
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + angdif_y.y, 0))
-		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + angdif_p.x, 0, 0))
+		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))
+		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + pitchDiff.x, 0, 0))
 
 		-- self:TurningSound(ct)
 		self:Aiming(ct)
