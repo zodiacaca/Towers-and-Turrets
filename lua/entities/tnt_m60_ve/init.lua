@@ -147,7 +147,7 @@ function ENT:TurningTurret(ct)
 		p_AngDiff.p = pitchDiff.p
 
 		local as = AngularSpeed
-		if as.y == 0 then
+		if math.abs(as.y) <= 0.01 then
 			as.y = self.YawMotorThrottle * self.AngularSpeed
 			if p_AngularSpeed.y != 0 then
 				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.AngularSpeed / 10)
@@ -160,7 +160,7 @@ function ENT:TurningTurret(ct)
 		as.y = math.abs(as.y)
 
 		local ps = PitchSpeed
-		if ps.x == 0 then
+		if math.abs(ps.x) <= 0.01 then
 			ps.x = self.PitchMotorThrottle * self.AngularSpeed * ratio
 			if p_PitchSpeed.x != 0 then
 				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.AngularSpeed * ratio / 10)
