@@ -70,14 +70,14 @@ end
 local CT, target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, BoneIndexT
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, yawDiff, pitchDiff, newpos, newang, clampDelta
+local aimpos_w, aimang_w, aimpos, aimang, ang_aim_y, ang_aim_p, yawDiff, pitchDiff, newpos, newang, YawClampDelta, PitchClampDelta
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local attpos, attang
 local recoil, back
 local p_AngDiff = { y = 0, p = 0 }
-local p_YawBoneAng = Angle(0, 0, 0)
-local AngularSpeed = Angle(0, 0, 0)
-local p_AngularSpeed = Angle(0, 0, 0)
+local p_YawBoneAng, p_PitchBoneAng = Angle(0, 0, 0), Angle(0, 0, 0)
+local AngularSpeed, PitchSpeed = Angle(0, 0, 0), Angle(0, 0, 0)
+local p_AngularSpeed, p_PitchSpeed = Angle(0, 0, 0), Angle(0, 0, 0)
 
 function ENT:UpdateTransformation()
 
@@ -89,13 +89,16 @@ function ENT:UpdateTransformation()
 	PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
 
 	AngularSpeed = YawBoneAng - p_YawBoneAng
+	PitchSpeed = PitchBoneAng - p_PitchBoneAng
 
 end
 
 function ENT:PostTransformation()
 
 	p_YawBoneAng = YawBoneAng
+	p_PitchBoneAng = PitchBoneAng
 	p_AngularSpeed = AngularSpeed
+	p_PitchSpeed = PitchSpeed
 
 end
 
@@ -129,7 +132,7 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- throttle
-		local ratio = 0.4
+		local ratio = 0.75
 		if p_AngDiff.y * yawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
@@ -138,7 +141,7 @@ function ENT:TurningTurret(ct)
 		if p_AngDiff.p * pitchDiff.p <= 0 then
 			self.PitchMotorThrottle = 0
 		else
-			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.AngularSpeed * ratio), 0, 1))
+			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.AngularSpeed), 0, 1))
 		end
 		p_AngDiff.y = yawDiff.y
 		p_AngDiff.p = pitchDiff.p
@@ -156,9 +159,23 @@ function ENT:TurningTurret(ct)
 		end
 		as.y = math.abs(as.y)
 
-		clampDelta = self.AngularSpeed * GetConVarNumber("host_timescale") * (as.y / self.AngularSpeed)
-		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
-		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
+		local ps = PitchSpeed
+		if ps.x == 0 then
+			ps.x = self.PitchMotorThrottle * self.AngularSpeed * ratio
+			if p_PitchSpeed.x != 0 then
+				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.AngularSpeed * ratio / 10)
+			end
+		else
+			if math.abs(ps.x) > 180 then
+				ps.x = -ps.x/math.abs(ps.x) * (360 - math.abs(ps.x))
+			end
+		end
+		ps.x = math.abs(ps.x)
+
+		YawClampDelta = self.AngularSpeed * GetConVarNumber("host_timescale") * (as.y / self.AngularSpeed)
+		PitchClampDelta = self.AngularSpeed * GetConVarNumber("host_timescale") * (ps.x / self.AngularSpeed)
+		yawDiff.y = math.Clamp(yawDiff.y, -YawClampDelta, YawClampDelta) * self.YawMotorThrottle
+		pitchDiff.x = math.Clamp(pitchDiff.x, -PitchClampDelta, PitchClampDelta) * self.PitchMotorThrottle
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))

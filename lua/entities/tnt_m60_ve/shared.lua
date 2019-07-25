@@ -55,7 +55,7 @@ ENT.PitchLimitDown = 85
 ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "bolt"
 
-ENT.AngularSpeed = 3
+ENT.AngularSpeed = 3.5
 ENT.ReloadSpeed = 0.1
 
 ENT.RecoilOffset = 80
