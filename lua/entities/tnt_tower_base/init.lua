@@ -550,7 +550,7 @@ function ENT:TurningTurret(ct)
 		if math.abs(as.y) <= 0.01 then	-- vehicle shaking
 			as.y = self.YawMotorThrottle * self.AngularSpeed
 			if p_AngularSpeed.y != 0 then
-				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.AngularSpeed / 10)
+				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.AngularSpeed / 7.5)
 			end
 		else
 			if math.abs(as.y) > 180 then
