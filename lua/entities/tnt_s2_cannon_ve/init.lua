@@ -104,7 +104,7 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Acceleration
-		local clampDelta = math.sqrt(ct - self.ActivatedTime) * self.AngularSpeed * GetConVarNumber("host_timescale")
+		local clampDelta = math.sqrt(ct - self.ActivatedTime) * self.RotateSpeed * GetConVarNumber("host_timescale")
 		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta)
 		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta)
 

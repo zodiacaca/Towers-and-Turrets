@@ -54,7 +54,7 @@ ENT.PitchLimitDown = 45
 ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "Slave_Barrel"
 
-ENT.AngularSpeed = 8
+ENT.RotateSpeed = 8
 ENT.ReloadSpeed = 0
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort = 0.5

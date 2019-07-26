@@ -54,7 +54,7 @@ ENT.RecoilBone = "Slave_Barrel_Mid"
 ENT.RecoilBoneAdditional_1 = "Slave_Barrel_L"
 ENT.RecoilBoneAdditional_2 = "Slave_Barrel_R"
 
-ENT.AngularSpeed = 8
+ENT.RotateSpeed = 8
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort =0.5

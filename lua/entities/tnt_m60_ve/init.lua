@@ -136,21 +136,21 @@ function ENT:TurningTurret(ct)
 		if p_AngDiff.y * yawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
-			self.YawMotorThrottle = Lerp(0.1, self.YawMotorThrottle, math.Clamp(math.abs(yawDiff.y) / self.AngularSpeed, 0, 1))
+			self.YawMotorThrottle = Lerp(0.1, self.YawMotorThrottle, math.Clamp(math.abs(yawDiff.y) / self.RotateSpeed, 0, 1))
 		end
 		if p_AngDiff.p * pitchDiff.p <= 0 then
 			self.PitchMotorThrottle = 0
 		else
-			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.AngularSpeed), 0, 1))
+			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.RotateSpeed), 0, 1))
 		end
 		p_AngDiff.y = yawDiff.y
 		p_AngDiff.p = pitchDiff.p
 
 		local as = AngularSpeed
 		if math.abs(as.y) <= 0.01 then
-			as.y = self.YawMotorThrottle * self.AngularSpeed
+			as.y = self.YawMotorThrottle * self.RotateSpeed
 			if p_AngularSpeed.y != 0 then
-				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.AngularSpeed / 7.5)
+				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.RotateSpeed / 7.5)
 			end
 		else
 			if math.abs(as.y) > 180 then
@@ -161,9 +161,9 @@ function ENT:TurningTurret(ct)
 
 		local ps = PitchSpeed
 		if math.abs(ps.x) <= 0.01 then
-			ps.x = self.PitchMotorThrottle * self.AngularSpeed * ratio
+			ps.x = self.PitchMotorThrottle * self.RotateSpeed * ratio
 			if p_PitchSpeed.x != 0 then
-				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.AngularSpeed * ratio / 10)
+				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * ratio / 10)
 			end
 		else
 			if math.abs(ps.x) > 180 then
@@ -172,8 +172,8 @@ function ENT:TurningTurret(ct)
 		end
 		ps.x = math.abs(ps.x)
 
-		YawClampDelta = self.AngularSpeed * GetConVarNumber("host_timescale") * (as.y / self.AngularSpeed)
-		PitchClampDelta = self.AngularSpeed * GetConVarNumber("host_timescale") * (ps.x / self.AngularSpeed)
+		YawClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (as.y / self.RotateSpeed)
+		PitchClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (ps.x / self.RotateSpeed)
 		yawDiff.y = math.Clamp(yawDiff.y, -YawClampDelta, YawClampDelta) * self.YawMotorThrottle
 		pitchDiff.x = math.Clamp(pitchDiff.x, -PitchClampDelta, PitchClampDelta) * self.PitchMotorThrottle
 
