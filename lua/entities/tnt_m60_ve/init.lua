@@ -51,6 +51,7 @@ function ENT:Initialize()
 
 	self.YawMotorThrottle = 0
 	self.PitchMotorThrottle = 0
+	self.MinTheta = { x = 0, y = 0 }
 
 	self:SetTrigger(true)	-- Touch
 
@@ -130,9 +131,14 @@ function ENT:TurningTurret(ct)
 		if math.abs(pitchDiff.x) > 180 then
 			pitchDiff.x = -pitchDiff.x/math.abs(pitchDiff.x) * (360 - math.abs(pitchDiff.x))
 		end
+		if math.abs(yawDiff.y) < self.MinTheta.y then
+			yawDiff.y = 0
+		end
+		if math.abs(pitchDiff.x) < self.MinTheta.x then
+			pitchDiff.x = 0
+		end
 
 		-- throttle
-		local ratio = 0.75
 		if p_AngDiff.y * yawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
@@ -141,13 +147,13 @@ function ENT:TurningTurret(ct)
 		if p_AngDiff.p * pitchDiff.p <= 0 then
 			self.PitchMotorThrottle = 0
 		else
-			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.RotateSpeed), 0, 1))
+			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.RotateSpeed * self.RotateSpeedRatio), 0, 1))
 		end
 		p_AngDiff.y = yawDiff.y
 		p_AngDiff.p = pitchDiff.p
 
 		local as = AngularSpeed
-		if math.abs(as.y) <= 0.01 then
+		if math.abs(as.y) <= self.MinTheta.y then
 			as.y = self.YawMotorThrottle * self.RotateSpeed
 			if p_AngularSpeed.y != 0 then
 				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.RotateSpeed / 7.5)
@@ -160,10 +166,10 @@ function ENT:TurningTurret(ct)
 		as.y = math.abs(as.y)
 
 		local ps = PitchSpeed
-		if math.abs(ps.x) <= 0.01 then
-			ps.x = self.PitchMotorThrottle * self.RotateSpeed * ratio
+		if math.abs(ps.x) <= self.MinTheta.x then
+			ps.x = self.PitchMotorThrottle * self.RotateSpeed * self.RotateSpeedRatio
 			if p_PitchSpeed.x != 0 then
-				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * ratio / 10)
+				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * self.RotateSpeedRatio / 10)
 			end
 		else
 			if math.abs(ps.x) > 180 then
@@ -172,10 +178,18 @@ function ENT:TurningTurret(ct)
 		end
 		ps.x = math.abs(ps.x)
 
+		self.MinTheta.y = math.Clamp(self.YawMotorThrottle * 0.5, 0.05, 1)
+		self.MinTheta.x = math.Clamp(self.PitchMotorThrottle * 0.5, 0.05, 1)
 		YawClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (as.y / self.RotateSpeed)
 		PitchClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (ps.x / self.RotateSpeed)
 		yawDiff.y = math.Clamp(yawDiff.y, -YawClampDelta, YawClampDelta) * self.YawMotorThrottle
+		if math.abs(yawDiff.y) > 0 and math.abs(yawDiff.y) < self.MinTheta.y then
+			yawDiff.y = math.abs(yawDiff.y) / yawDiff.y * self.MinTheta.y
+		end
 		pitchDiff.x = math.Clamp(pitchDiff.x, -PitchClampDelta, PitchClampDelta) * self.PitchMotorThrottle
+		if math.abs(pitchDiff.x) > 0 and math.abs(pitchDiff.x) < self.MinTheta.x then
+			pitchDiff.x = math.abs(pitchDiff.x) / pitchDiff.x * self.MinTheta.x
+		end
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))

@@ -532,7 +532,6 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- throttle
-		local ratio = 0.25
 		if p_AngDiff.y * yawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
@@ -541,7 +540,7 @@ function ENT:TurningTurret(ct)
 		if p_AngDiff.p * pitchDiff.p <= 0 then
 			self.PitchMotorThrottle = 0
 		else
-			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.RotateSpeed * ratio), 0, 1))
+			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(pitchDiff.x) / (self.RotateSpeed * self.RotateSpeedRatio), 0, 1))
 		end
 		p_AngDiff.y = yawDiff.y
 		p_AngDiff.p = pitchDiff.p
@@ -561,7 +560,7 @@ function ENT:TurningTurret(ct)
 
 		clampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (as.y / self.RotateSpeed)
 		yawDiff.y = math.Clamp(yawDiff.y, -clampDelta, clampDelta) * self.YawMotorThrottle
-		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta) * ratio * self.PitchMotorThrottle
+		pitchDiff.x = math.Clamp(pitchDiff.x, -clampDelta, clampDelta) * self.RotateSpeedRatio * self.PitchMotorThrottle
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + yawDiff.y, 0))

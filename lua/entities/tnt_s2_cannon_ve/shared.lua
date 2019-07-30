@@ -55,6 +55,7 @@ ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "Slave_Barrel"
 
 ENT.RotateSpeed = 3.75
+ENT.RotateSpeedRatio = 0.75
 ENT.ReloadSpeed = 0
 
 ENT.RecoilOffset = 200

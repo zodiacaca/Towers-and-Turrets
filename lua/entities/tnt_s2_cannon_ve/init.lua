@@ -126,7 +126,6 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- throttle
-		local ratio = 0.75
 		if p_AngDiff.y * yawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
@@ -155,9 +154,9 @@ function ENT:TurningTurret(ct)
 
 		local ps = PitchSpeed
 		if math.abs(ps.x) <= 0.01 then
-			ps.x = self.PitchMotorThrottle * self.RotateSpeed * ratio
+			ps.x = self.PitchMotorThrottle * self.RotateSpeed * self.RotateSpeedRatio
 			if p_PitchSpeed.x != 0 then
-				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * ratio / 10)
+				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * self.RotateSpeedRatio / 10)
 			end
 		else
 			if math.abs(ps.x) > 180 then
