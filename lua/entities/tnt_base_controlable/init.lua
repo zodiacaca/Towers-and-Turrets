@@ -72,9 +72,6 @@ end
 
 function ENT:InitMeta()
 
-	self.Target = nil
-	self.TargetBoneIndex = nil
-
 	self.YawBoneIndex = nil
 	self.YawBonePos = nil
 	self.YawBoneAng = nil
@@ -120,22 +117,22 @@ end
 
 function ENT:UpdateTransformation()
 
-	YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
-	YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(YawBoneIndex)
-	PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
-	PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(PitchBoneIndex)
-	YawBonePos, YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
-	PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
+	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
+	YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
+	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
+	PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
+	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
+	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
 
-	AngularSpeed = YawBoneAng - p_YawBoneAng
-	PitchSpeed = PitchBoneAng - p_PitchBoneAng
+	AngularSpeed = self.YawBoneAng - p_YawBoneAng
+	PitchSpeed = self.PitchBoneAng - p_PitchBoneAng
 
 end
 
 function ENT:PostTransformation()
 
-	p_YawBoneAng = YawBoneAng
-	p_PitchBoneAng = PitchBoneAng
+	p_YawBoneAng = self.YawBoneAng
+	p_PitchBoneAng = self.PitchBoneAng
 	p_AngularSpeed = AngularSpeed
 	p_PitchSpeed = PitchSpeed
 
@@ -149,8 +146,8 @@ function ENT:TurningTurret(ct)
 		-- Angles between the target and the bones
 		AimPosition_w = self:GetTracer().HitPos
 		AimPosition, AimAngle = self:TranslateCoordinateSystem(AimPosition_w, Angle(0, 0, 0))
-		AngleAimYaw = (AimPosition - YawBonePos):Angle()
-		AngleAimPitch = (AimPosition - PitchBonePos):Angle()
+		AngleAimYaw = (AimPosition - self.YawBonePos):Angle()
+		AngleAimPitch = (AimPosition - self.PitchBonePos):Angle()
 		if AngleAimPitch.x >= self.PitchLimitDown && AngleAimPitch.x <= self.PitchLimitUp then
 			if self.TurningLoop then
 				self.TurningLoop:Stop()
@@ -159,8 +156,8 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- The angle differences between them
-		YawDiff = AngleAimYaw - YawBoneAng
-		PitchDiff = AngleAimPitch - PitchBoneAng
+		YawDiff = AngleAimYaw - self.YawBoneAng
+		PitchDiff = AngleAimPitch - self.PitchBoneAng
 
 		-- Make sure the turret don't turn like a maniac
 		if math.abs(YawDiff.y) > 180 then
@@ -230,8 +227,8 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
-		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x, 0, 0))
+		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, self.YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
+		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + PitchDiff.x, 0, 0))
 
 		-- self:TurningSound(ct)
 		self:Aiming(ct)
