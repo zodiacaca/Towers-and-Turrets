@@ -28,7 +28,7 @@ function TOOL:LeftClick( trace )
 
 	local Selected = 0
 	for k,v in pairs(ents.GetAll()) do
-		if v.Base == "tnt_tower_base" then
+		if v.Base == "tnt_base_deployable" then
 			Selected = Selected + 1
 			self:DoRemoveEntity(v)
 		end
@@ -49,7 +49,7 @@ function TOOL:RightClick( trace )
 
 	local Selected = 0
 	for k,v in pairs(ents.GetAll()) do
-		if v.Base == "tnt_turret_base" then
+		if v.Base == "tnt_base_attachable" then
 			Selected = Selected + 1
 			self:DoRemoveEntity(v)
 		end

@@ -1,6 +1,6 @@
 
 ENT.Type 			= "anim"
-ENT.Base 			= "tnt_turret_base"
+ENT.Base 			= "tnt_base_controlable"
 ENT.PrintName	= "Cannon Turret (Vehicle)"
 ENT.Category		= "Towers and Turrets"
 

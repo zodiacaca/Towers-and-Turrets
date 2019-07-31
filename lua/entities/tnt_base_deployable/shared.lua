@@ -1,7 +1,7 @@
 
 ENT.Type 			= "anim"
 ENT.Base 			= "base_anim"
-ENT.PrintName	= "tnt_tower_base"
+ENT.PrintName	= "tnt_base_deployable"
 ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= false

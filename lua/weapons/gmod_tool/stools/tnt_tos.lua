@@ -29,7 +29,7 @@ end
 
 function TOOL:LeftClick( trace )
 
-	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_tower_base" then return false end
+	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_base_deployable" then return false end
 
 	if ( CLIENT ) then return true end
 
@@ -52,7 +52,7 @@ end
 
 function TOOL:RightClick( trace )
 
-	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_tower_base" then return false end
+	if !trace.Entity:IsValid() or !trace.Entity.Base or trace.Entity.Base != "tnt_base_deployable" then return false end
 
 	if ( CLIENT ) then return true end
 
@@ -88,7 +88,7 @@ function TOOL:Reload( trace )
 		if self:GetOwner():KeyDown(IN_USE) then
 
 			for k,v in pairs(ents.GetAll()) do
-				if v.Base == "tnt_tower_base" then
+				if v.Base == "tnt_base_deployable" then
 					v:SetReady(stat)
 				end
 			end
@@ -101,7 +101,7 @@ function TOOL:Reload( trace )
 			if trace.Entity:IsNPC() then
 				self.TracerEntity[1] = trace.Entity
 			elseif self.TracerEntity[1] != nil then
-				if trace.Entity.Base == "tnt_tower_base" then
+				if trace.Entity.Base == "tnt_base_deployable" then
 					trace.Entity:SetFriends( self.TracerEntity[1]:GetClass())
 					print(self.TracerEntity[1]:GetClass())
 				end

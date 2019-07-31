@@ -368,7 +368,7 @@ function ENT:Explosion()
 			}
 		local ouchies = util.TraceLine(td)
 		if IsValid(ouchies.Entity) then
-			if !ouchies.Entity.Base == "tnt_tower_base" then
+			if !ouchies.Entity.Base == "tnt_base_deployable" then
 				local dist = pos:Distance(ouchies.HitPos)
 				dist = math.sqrt(dist)
 				local dir = (ouchies.HitPos - pos):GetNormal()
