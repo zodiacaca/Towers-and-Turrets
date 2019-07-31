@@ -10,7 +10,7 @@ ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
-ENT.Turret = "tnt_s2_cannon_ve"
+ENT.Turret = "tnt_ctrl_s2_cannon"
 ENT.TurretModel = "models/tnt/cannon_turret_lv1.mdl"
 ENT.TurretIdleSound = nil
 ENT.TurretTurningSound = Sound("TNT_Turret_ve.Turning")

@@ -3,7 +3,7 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-include("entities/tnt_m60/exclusive_effects.lua")
+include("entities/tnt_att_m60/exclusive_effects.lua")
 
 
 function ENT:Initialize()

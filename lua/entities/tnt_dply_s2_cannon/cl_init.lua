@@ -1,4 +1,4 @@
 
 include("shared.lua")
 
-killicon.Add( "tnt_s2_cannon_to", "vgui/hud/tnt_cannon", Color( 255, 255, 255, 255 ) )
+killicon.Add( "tnt_dply_s2_cannon", "vgui/hud/tnt_cannon", Color( 255, 255, 255, 255 ) )

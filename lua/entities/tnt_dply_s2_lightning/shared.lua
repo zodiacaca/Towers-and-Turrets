@@ -8,7 +8,7 @@ ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = false
 
-ENT.Tower = "tnt_s2_lightning"
+ENT.Tower = "tnt_dply_s2_lightning"
 ENT.TowerModel = "models/tnt/lightning_lv3.mdl"
 ENT.TowerIdleSound = Sound("S2_Lightning.Idle")
 

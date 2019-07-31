@@ -2,11 +2,12 @@
 game.AddParticles("particles/tnt_fx.pcf")
 
 if ( CLIENT ) then
-	language.Add( "tnt_m60", "M60 Turret" )
-	language.Add( "tnt_s2_cannon_to", "Cannon Tower" )
-	language.Add( "tnt_s2_cannon_tu", "Cannon Turret" )
-	language.Add( "tnt_s2_cannon_ve", "Cannon Turret" )
-	language.Add( "tnt_s2_lightning", "Lightning Tower" )
+	language.Add( "tnt_att_m60", "M60 Turret" )
+	language.Add( "tnt_ctrl_m60", "M60 Turret" )
+	language.Add( "tnt_dply_s2_cannon", "Cannon Tower" )
+	language.Add( "tnt_att_s2_cannon", "Cannon Turret" )
+	language.Add( "tnt_ctrl_s2_cannon", "Cannon Turret" )
+	language.Add( "tnt_dply_s2_lightning", "Lightning Tower" )
 	language.Add( "tnt_towerbase", "Tower Base" )
 end
 

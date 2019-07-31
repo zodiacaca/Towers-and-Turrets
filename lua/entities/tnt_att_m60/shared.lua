@@ -10,7 +10,7 @@ ENT.AutomaticFrameAdvance = true
 ENT.AdminOnly = true
 ENT.DoNotDuplicate = false
 
-ENT.Turret = "tnt_m60"
+ENT.Turret = "tnt_att_m60"
 ENT.TurretModel = "models/tnt/m60_turret.mdl"
 ENT.TurretIdleSound = nil
 ENT.TurretTurningSound = Sound("TNT_M60.Turning")
