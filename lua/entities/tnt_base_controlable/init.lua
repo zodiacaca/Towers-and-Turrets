@@ -118,14 +118,14 @@ end
 function ENT:UpdateTransformation()
 
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
-	YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
+	self.YawBonePos_w, self.YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
 	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
-	PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
-	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
-	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
+	self.PitchBonePos_w, self.PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
+	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(self.YawBonePos_w, self.YawBoneAng_w)
+	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(self.PitchBonePos_w, self.PitchBoneAng_w)
 
-	AngularSpeed = self.YawBoneAng - p_YawBoneAng
-	PitchSpeed = self.PitchBoneAng - p_PitchBoneAng
+	self.AngularSpeed = self.YawBoneAng - p_YawBoneAng
+	self.PitchSpeed = self.PitchBoneAng - p_PitchBoneAng
 
 end
 
@@ -133,8 +133,8 @@ function ENT:PostTransformation()
 
 	p_YawBoneAng = self.YawBoneAng
 	p_PitchBoneAng = self.PitchBoneAng
-	p_AngularSpeed = AngularSpeed
-	p_PitchSpeed = PitchSpeed
+	p_AngularSpeed = self.AngularSpeed
+	p_PitchSpeed = self.PitchSpeed
 
 end
 
@@ -187,7 +187,7 @@ function ENT:TurningTurret(ct)
 		p_AngDiff.y = YawDiff.y
 		p_AngDiff.p = PitchDiff.p
 
-		local as = AngularSpeed
+		local as = self.AngularSpeed
 		if math.abs(as.y) <= self.MinTheta.y then
 			as.y = self.YawMotorThrottle * self.RotateSpeed
 			if p_AngularSpeed.y != 0 then
@@ -200,7 +200,7 @@ function ENT:TurningTurret(ct)
 		end
 		as.y = math.abs(as.y)
 
-		local ps = PitchSpeed
+		local ps = self.PitchSpeed
 		if math.abs(ps.x) <= self.MinTheta.x then
 			ps.x = self.PitchMotorThrottle * self.RotateSpeed * self.RotateSpeedRatio
 			if p_PitchSpeed.x != 0 then
@@ -268,12 +268,12 @@ function ENT:Aiming(ct)
 		return
 	end
 
-	AttPos = self.Entity:GetAttachment(self.AimAttachment).Pos
-	AttAng = self.Entity:GetAttachment(self.AimAttachment).Ang
+	self.AttPos = self.Entity:GetAttachment(self.AimAttachment).Pos
+	self.AttAng = self.Entity:GetAttachment(self.AimAttachment).Ang
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
 		if self.Owner:KeyDown(GetConVarNumber("tnt_turret_fire")) then
-			self:Shoot(ct, AttPos, AttAng)
+			self:Shoot(ct, self.AttPos, self.AttAng)
 		end
 	end
 
