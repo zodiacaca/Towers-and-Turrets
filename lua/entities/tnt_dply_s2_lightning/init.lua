@@ -10,6 +10,38 @@ function ENT:PrecacheParticles()
 
 end
 
+function ENT:Think()
+
+	if !self.Collided then
+		local phys = self:GetPhysicsObject()
+		if ( IsValid( phys ) ) then phys:AddVelocity( -self:GetUp() * 16 ) end
+	end
+
+	local CT = CurTime()
+
+	if self.TowerIdleSound != nil then
+		if self.LoopSound then
+			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
+				self.LoopSound:ChangeVolume(0.5, 0.5)
+			else
+				self.LoopSound:ChangeVolume(1, 0.5)
+				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
+			end
+		else
+			self.LoopSound = CreateSound(self.Entity, Sound(self.TowerIdleSound))
+			self.LoopSound:Play()
+		end
+	end
+
+	self:TurningTurret(CT)
+	self:Recoil(CT)
+	self:ReloadAmmo(CT)
+
+	self:NextThink(CurTime())
+
+	return true
+end
+
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
