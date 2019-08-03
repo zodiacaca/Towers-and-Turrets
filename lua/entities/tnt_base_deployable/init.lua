@@ -403,7 +403,6 @@ function ENT:Explosion()
 
 end
 
-local target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, TargetBoneIndex
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
 local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang, clampDelta
@@ -477,7 +476,6 @@ end
 
 function ENT:UpdateTarget(ct, target)
 
-	-- this target updating system is beyond my ability, it works and I don't really know the relationships between them
 	if (ct - self.LastTargetTime) > self.UpdateDelay then
 
 		self.LastTargetTime = ct
@@ -497,21 +495,21 @@ function ENT:TurningTurret(ct)
 	if GetConVar("ai_disabled"):GetBool() then return end
 
 	if self.PlanB then
-		target = self:GetTargetB()
+		self.Target = self:GetTargetB()
 	else
-		target = self:GetTargetA()
+		self.Target = self:GetTargetA()
 	end
-	self:UpdateTarget(ct, target)
+	self:UpdateTarget(ct, self.Target)
 
-	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
+	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (self.Target != nil) then
 
 		-- Angles between the target and the bones
-		TargetBoneIndex = target:LookupBone(target:GetBoneName(1))
+		TargetBoneIndex = self.Target:LookupBone(self.Target:GetBoneName(1))
 		if TargetBoneIndex == nil then
 			self.PlanB = !self.PlanB
 			return
 		end
-		AimPosition_w, AimAngle_w = target:GetBonePosition(TargetBoneIndex)
+		AimPosition_w, AimAngle_w = self.Target:GetBonePosition(TargetBoneIndex)
 		AimPosition, AimAngle = self:TranslateCoordinateSystem(AimPosition_w, AimAngle_w)
 		AngleAimYaw = (AimPosition - YawBonePos):Angle()
 		AngleAimPitch = (AimPosition - PitchBonePos):Angle()
@@ -599,7 +597,7 @@ function ENT:TurningTurret(ct)
 		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x, 0, 0))
 		-- print(PitchDiff.x)
 		self:TurningSound()
-		self:Aiming(ct, target)
+		self:Aiming(ct, self.Target)
 
 	else
 

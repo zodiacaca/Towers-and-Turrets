@@ -46,9 +46,9 @@ function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
 
-	target = self:GetTargetA()
+	self.Target = self:GetTargetA()
 
-	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
+	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (self.Target != nil) then
 
 		if (ct > (self.LastShoot + self.Cooldown)) then
 			util.ParticleTracerEx("tnt_beam_up", self.Entity:GetPos(), self.Entity:GetAttachment(1).Pos, true, self.Entity:EntIndex(), 2)
@@ -57,7 +57,7 @@ function ENT:TurningTurret(ct)
 				self.Charged = true
 			end
 			if (ct > (self.ChargedTime + 0.3)) then
-				self:Shoot(ct, target)
+				self:Shoot(ct, self.Target)
 				self.Charged = false
 			end
 		end

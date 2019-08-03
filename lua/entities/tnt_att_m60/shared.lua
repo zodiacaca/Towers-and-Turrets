@@ -20,7 +20,7 @@ ENT.TurretReloadSound = Sound("tnt/m60/m60_reload1.wav")	-- Default level of the
 
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
-ENT.MuzzleLightScale = 0.2
+ENT.MuzzleLightScale = 1.5
 ENT.TracerType = "Tracer"
 ENT.TracerCount = 5
 

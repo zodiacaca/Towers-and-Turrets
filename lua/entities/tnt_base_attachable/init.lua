@@ -13,7 +13,7 @@ function ENT:SpawnFunction( ply, tr )
 	end
 	if count >= 10 then
 		ply:EmitSound(Sound("buttons/button10.wav"))
-		ply:ChatPrint("Turret cap has been reached!")
+		ply:ChatPrint("Maximum reached!")
 		return false
 	end
 
@@ -191,7 +191,6 @@ function ENT:Explosion()
 
 end
 
-local target
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, TargetBoneIndex
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
 local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang, clampDelta
@@ -285,29 +284,29 @@ function ENT:TurningTurret(ct)
 			-- ["tgt_time"] = self.LastTargetTime,
 			-- ["delay"] = self.UpdateDelay,
 			-- ["planB"] = self.PlanB,
-			-- ["tgt"] = target,
+			-- ["tgt"] = self.Target,
 			-- ["old_tgt"] = self.OldTarget,
-			-- ["tgt = old_tgt"] = (target == self.OldTarget)
+			-- ["tgt = old_tgt"] = (self.Target == self.OldTarget)
 		-- }
 		-- PrintTable(tbl)
 	-- end
 
 	if self.PlanB then
-		target = self:GetTargetB()
+		self.Target = self:GetTargetB()
 	else
-		target = self:GetTargetA()
+		self.Target = self:GetTargetA()
 	end
-	self:UpdateTarget(ct, target)
+	self:UpdateTarget(ct, self.Target)
 
-	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (target != nil) then
+	if (self:GetReady() == true) and (ct > self:GetReloadTime()) and (self.Target != nil) then
 
 		-- Angles between the target and the bones
-		TargetBoneIndex = target:LookupBone(target:GetBoneName(1))
+		TargetBoneIndex = self.Target:LookupBone(self.Target:GetBoneName(1))
 		if TargetBoneIndex == nil then
 			self.PlanB = !self.PlanB
 			return
 		end
-		AimPosition_w, AimAngle_w = target:GetBonePosition(TargetBoneIndex)
+		AimPosition_w, AimAngle_w = self.Target:GetBonePosition(TargetBoneIndex)
 		AimPosition, AimAngle = self:TranslateCoordinateSystem(AimPosition_w, AimAngle_w)
 		AngleAimYaw = (AimPosition - YawBonePos):Angle()
 		AngleAimPitch = (AimPosition - PitchBonePos):Angle()
