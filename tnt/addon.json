@@ -6,8 +6,6 @@
 	[
 		"*.psd",
 		"*.vcproj",
-		"*.svn*",
-		".git",
-		".gitattributes"
+		"*.svn*"
 	]
 }
