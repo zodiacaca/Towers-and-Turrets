@@ -69,6 +69,8 @@ function ENT:Initialize()
 		self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.AimYawBone), Angle(0, math.random(0,360), 0))
 	end
 
+	self:InitMeta()
+
 	self.YawMotorThrottle = 0
 	self.PitchMotorThrottle = 0
 	self.MinTheta = { x = 0, y = 0 }
@@ -197,11 +199,19 @@ local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPit
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local AttPos, AttAng
 local recoil, back
-local p_AngDiff = { y = 0, p = 0 }
-local p_AngDiff = { y = 0, p = 0 }
-local p_YawBoneAng, p_PitchBoneAng = Angle(0, 0, 0), Angle(0, 0, 0)
-local AngularSpeed, PitchSpeed = Angle(0, 0, 0), Angle(0, 0, 0)
-local p_AngularSpeed, p_PitchSpeed = Angle(0, 0, 0), Angle(0, 0, 0)
+
+function ENT:InitMeta()
+
+	self.AngularSpeed = Angle(0, 0, 0)
+	self.PitchSpeed = Angle(0, 0, 0)
+
+	self.p_AngDiff = { y = 0, p = 0 }
+	self.p_YawBoneAng = Angle(0, 0, 0)
+	self.p_PitchBoneAng = Angle(0, 0, 0)
+	self.p_AngularSpeed = Angle(0, 0, 0)
+	self.p_PitchSpeed = Angle(0, 0, 0)
+
+end
 
 /*---------------------------------------------------------
    Name: Think
@@ -243,17 +253,17 @@ function ENT:UpdateTransformation()
 	YawBonePos, YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
 	PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
 
-	AngularSpeed = YawBoneAng - p_YawBoneAng
-	PitchSpeed = PitchBoneAng - p_PitchBoneAng
+	self.AngularSpeed = YawBoneAng - self.p_YawBoneAng
+	self.PitchSpeed = PitchBoneAng - self.p_PitchBoneAng
 
 end
 
 function ENT:PostTransformation()
 
-	p_YawBoneAng = YawBoneAng
-	p_PitchBoneAng = PitchBoneAng
-	p_AngularSpeed = AngularSpeed
-	p_PitchSpeed = PitchSpeed
+	self.p_YawBoneAng = YawBoneAng
+	self.p_PitchBoneAng = PitchBoneAng
+	self.p_AngularSpeed = self.AngularSpeed
+	self.p_PitchSpeed = self.PitchSpeed
 
 end
 
@@ -337,24 +347,24 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- throttle
-		if p_AngDiff.y * YawDiff.y <= 0 then
+		if self.p_AngDiff.y * YawDiff.y <= 0 then
 			self.YawMotorThrottle = 0
 		else
 			self.YawMotorThrottle = Lerp(0.1, self.YawMotorThrottle, math.Clamp(math.abs(YawDiff.y) / self.RotateSpeed, 0, 1))
 		end
-		if p_AngDiff.p * PitchDiff.p <= 0 then
+		if self.p_AngDiff.p * PitchDiff.p <= 0 then
 			self.PitchMotorThrottle = 0
 		else
 			self.PitchMotorThrottle = Lerp(0.1, self.PitchMotorThrottle, math.Clamp(math.abs(PitchDiff.x) / (self.RotateSpeed * self.RotateSpeedRatio), 0, 1))
 		end
-		p_AngDiff.y = YawDiff.y
-		p_AngDiff.p = PitchDiff.p
+		self.p_AngDiff.y = YawDiff.y
+		self.p_AngDiff.p = PitchDiff.p
 
-		local as = AngularSpeed
+		local as = self.AngularSpeed
 		if math.abs(as.y) <= self.MinTheta.y then	-- vehicle shaking
 			as.y = self.YawMotorThrottle * self.RotateSpeed
-			if p_AngularSpeed.y != 0 then
-				as.y = math.min(as.y, math.abs(p_AngularSpeed.y) + self.RotateSpeed / 7.5)
+			if self.p_AngularSpeed.y != 0 then
+				as.y = math.min(as.y, math.abs(self.p_AngularSpeed.y) + self.RotateSpeed / 7.5)
 			end
 		else
 			if math.abs(as.y) > 180 then
@@ -363,11 +373,11 @@ function ENT:TurningTurret(ct)
 		end
 		as.y = math.abs(as.y)
 
-		local ps = PitchSpeed
+		local ps = self.PitchSpeed
 		if math.abs(ps.x) <= self.MinTheta.x then
 			ps.x = self.PitchMotorThrottle * self.RotateSpeed * self.RotateSpeedRatio
-			if p_PitchSpeed.x != 0 then
-				ps.x = math.min(ps.x, math.abs(p_PitchSpeed.x) + self.RotateSpeed * self.RotateSpeedRatio / 10)
+			if self.p_PitchSpeed.x != 0 then
+				ps.x = math.min(ps.x, math.abs(self.p_PitchSpeed.x) + self.RotateSpeed * self.RotateSpeedRatio / 10)
 			end
 		else
 			if math.abs(ps.x) > 180 then
@@ -530,7 +540,7 @@ function ENT:TurningSound()
 	if self.TurretTurningSound == nil then return end
 
 	if self.TurningLoop then
-		if p_AngDiff.y != YawDiff.y then
+		if self.p_AngDiff.y != YawDiff.y then
 			self.TurningLoop:Play()
 			self.TurningLoop:ChangeVolume(math.Clamp(self.YawMotorThrottle, 0.5, 1))
 			self.TurningLoop:ChangePitch(100 * GetConVarNumber("host_timescale"))
