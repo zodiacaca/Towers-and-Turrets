@@ -407,12 +407,15 @@ end
 
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, TargetBoneIndex
 local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
-local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang, clampDelta
+local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local AttPos, AttAng
 local recoil, back
 
 function ENT:InitMeta()
+
+	self.YawClampDelta = nil
+	self.PitchClampDelta = nil
 
 	self.AngularSpeed = Angle(0, 0, 0)
 	self.PitchSpeed = Angle(0, 0, 0)
@@ -592,13 +595,13 @@ function ENT:TurningTurret(ct)
 
 		self.MinTheta.y = math.Clamp(self.YawMotorThrottle * 0.5, 0.05, 1)
 		self.MinTheta.x = math.Clamp(self.PitchMotorThrottle * 0.5, 0.05, 1)
-		YawClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (as.y / self.RotateSpeed)
-		PitchClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (ps.x / self.RotateSpeed)
-		YawDiff.y = math.Clamp(YawDiff.y, -YawClampDelta, YawClampDelta) * self.YawMotorThrottle
+		self.YawClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (as.y / self.RotateSpeed)
+		self.PitchClampDelta = self.RotateSpeed * GetConVarNumber("host_timescale") * (ps.x / self.RotateSpeed)
+		YawDiff.y = math.Clamp(YawDiff.y, -self.YawClampDelta, self.YawClampDelta) * self.YawMotorThrottle
 		if math.abs(YawDiff.y) > 0 and math.abs(YawDiff.y) < self.MinTheta.y then
 			YawDiff.y = math.abs(YawDiff.y) / YawDiff.y * self.MinTheta.y
 		end
-		PitchDiff.x = math.Clamp(PitchDiff.x, -PitchClampDelta, PitchClampDelta) * self.PitchMotorThrottle
+		PitchDiff.x = math.Clamp(PitchDiff.x, -self.PitchClampDelta, self.PitchClampDelta) * self.PitchMotorThrottle
 		if math.abs(PitchDiff.x) > 0 and math.abs(PitchDiff.x) < self.MinTheta.x then
 			PitchDiff.x = math.abs(PitchDiff.x) / PitchDiff.x * self.MinTheta.x
 		end
