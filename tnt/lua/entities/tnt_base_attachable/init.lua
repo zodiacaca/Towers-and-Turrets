@@ -579,7 +579,7 @@ function ENT:Aiming(ct)
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
 		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self.Owner)) or GetConVar("tnt_attack_owner"):GetBool()) then
-			timer.Simple(math.random(0.003, 0.006), function()
+			timer.Create("tnt_shoot_delay"..self.Entity:EntIndex(), math.random(0.003, 0.006), 1, function()
 				self:Shoot(ct, AttPos, AttAng)
 			end)
 		end
@@ -723,5 +723,7 @@ function ENT:OnRemove()
 		self.FireSound:Stop()
 		self.FireSound = nil
 	end
+
+	timer.Destroy("tnt_shoot_delay"..self.Entity:EntIndex())
 
 end

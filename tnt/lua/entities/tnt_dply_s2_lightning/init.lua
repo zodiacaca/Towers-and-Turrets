@@ -117,7 +117,8 @@ function ENT:Shoot(ct, t)
 			local Muzzle_Light = EffectData()
 				Muzzle_Light:SetOrigin(apos)
 			util.Effect("tnt_lightning_light", Muzzle_Light)
-			timer.Simple(0.1, function()
+			self.ShockVictims = 0
+			timer.Create("tnt_shock_delay"..self.Entity:EntIndex()..self.ShockVictims, 0.1, 1, function()
 				local dmg1 = DamageInfo()
 					dmg1:SetDamageType(DMG_SHOCK)
 					dmg1:SetDamage(damage)
@@ -135,7 +136,8 @@ function ENT:Shoot(ct, t)
 				if IsValid(v) and (v:IsPlayer() or v:IsNPC()) then
 					if !(v == t) then
 						if v:IsLineOfSightClear(tpos) then
-							timer.Simple(0.1, function()
+							self.ShockVictims = self.ShockVictims + 1
+							timer.Create("tnt_shock_delay"..self.Entity:EntIndex()..self.ShockVictims, 0.1, 1, function()
 							local dmg2 = DamageInfo()
 								dmg2:SetDamageType(DMG_SHOCK)
 								dmg2:SetDamage(damage * 0.5)
@@ -184,6 +186,29 @@ function ENT:Recoil(ct)
 			self.Entity:ManipulateBoneScale(RecoilBoneIndex, Vector(-recoil, -recoil, -recoil))
 		else
 			self.Entity:ManipulateBoneScale(RecoilBoneIndex, Vector(-back, -back, -back))
+		end
+	end
+
+end
+
+function ENT:OnRemove()
+
+	if self.LoopSound then
+		self.LoopSound:Stop()
+		self.LoopSound = nil
+	end
+	if self.TurningLoop then
+		self.TurningLoop:Stop()
+		self.TurningLoop = nil
+	end
+	if self.FireSound then
+		self.FireSound:Stop()
+		self.FireSound = nil
+	end
+
+	if self.ShockVictims then
+		for i = 0, self.ShockVictims do
+			timer.Destroy("tnt_shock_delay"..self.Entity:EntIndex()..self.ShockVictims)
 		end
 	end
 
