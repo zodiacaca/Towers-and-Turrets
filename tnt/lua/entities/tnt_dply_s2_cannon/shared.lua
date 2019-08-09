@@ -11,7 +11,7 @@ ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
 ENT.Tower = "tnt_dply_s2_cannon"
-ENT.TowerModel = "models/tnt/cannon_lv3.mdl"
+ENT.TurretModel = "models/tnt/cannon_lv3.mdl"
 ENT.TowerIdleSound = nil
 ENT.TowerTurningSound = Sound("TNT_Turret.Turning")
 ENT.TowerShootSound = Sound("tnt/cannon/tnt_cannon_fire1.wav")
@@ -31,7 +31,7 @@ ENT.SettleAnim = true
 ENT.SettleAngleRandom = true
 ENT.CanReload = true
 
-ENT.TowerHealth = 600
+ENT.TurretHealth = 600
 ENT.TowerRange = 1200
 ENT.HitDamage = 20
 ENT.BlastDamage = 5
