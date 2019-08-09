@@ -175,6 +175,34 @@ function ENT:CreateIndicator()
 
 end
 
+ENT.NPCCubeOffset = 64
+ENT.NPCCubeRadius = 32
+ENT.NPCCubeCycle = 2
+
+function ENT:CreateNPCCube()
+
+	self.NPCCube = ents.Create( "tnt_npc_cube" )
+	if ( IsValid( self.NPCCube ) ) then
+		self.NPCCube:SetPos( self:GetPos() + self:GetForward() * self.NPCCubeRadius + self:GetUp() * self.NPCCubeOffset )
+		self.NPCCube:SetAngles( Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z ) )
+		self.NPCCube:Spawn()
+		self.NPCCube:Activate()
+	end
+
+end
+
+function ENT:RotateNPCCube(ct)
+
+	if IsValid(self.NPCCube) then
+		local theta = ct * 2 * math.pi / self.NPCCubeCycle
+		self.NPCCube:SetPos( self:GetPos() + self:GetForward() * self.NPCCubeRadius * math.cos(theta) + self:GetRight() * self.NPCCubeRadius * math.sin(theta) + self:GetUp() * self.NPCCubeOffset )
+		local ang = Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z )
+		ang:RotateAroundAxis( self:GetUp(), ct * 360 * 2 / self.NPCCubeCycle )
+		self.NPCCube:SetAngles( ang )
+	end
+
+end
+
 /*---------------------------------------------------------
    Recive the new statistics from stool
 ---------------------------------------------------------*/
@@ -248,6 +276,7 @@ function ENT:PhysicsCollide(data, phys)
 			self:SetReady(true)
 		end
 		self.Collided = true
+		self:CreateNPCCube()
 		if math.abs(angle.r) < 45 then
 			self.Entity:DrawShadow(false)
 			phys:EnableMotion(false)
@@ -301,13 +330,15 @@ function ENT:OnTakeDamage(dmginfo)
 
 	if dmginfo:GetDamageType() ~= DMG_SLASH then
 
-		local health = self:Health() - dmginfo:GetDamage()
+		local dmgAmount = dmginfo:GetDamage()
+		local dmgDice = math.Clamp(dmgAmount, 1, 30)
+		local health = self:Health() - dmgAmount
 		health = math.Clamp(health, 0, 10000)
-		local dice = math.random(1,3)
+		local dice = math.random(1,math.Round(30/dmgDice))
 
 		self:SetHealth(health)
 
-		if (self:Health() <= 0.6 * self.TowerHealth) and (dmginfo:GetDamage() > 30) and (dice == 1) then
+		if (self:Health() <= 0.6 * self.TowerHealth) and (dice == 1) then
 			if self.Fires <= 3 then
 				self:DamageEffect()
 			end
@@ -460,6 +491,8 @@ function ENT:Think()
 	self:ReloadAmmo(CT)
 	self:PostTransformation()
 
+	self:RotateNPCCube(CT)
+
 	self:NextThink(CurTime())
 
 	return true
@@ -507,6 +540,7 @@ end
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
+	if !IsValid(self.NPCCube) then self.TurningLoop:Stop() return end
 
 	if self.PlanB then
 		self.Target = self:GetTargetB()
@@ -941,5 +975,9 @@ function ENT:OnRemove()
 
 	timer.Destroy("tower_ready_"..self.Num.."")
 	timer.Destroy("tnt_shoot_delay"..self.Entity:EntIndex())
+
+	if IsValid(self.NPCCube) then
+		self.NPCCube:Remove()
+	end
 
 end

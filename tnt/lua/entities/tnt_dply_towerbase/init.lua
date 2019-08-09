@@ -3,8 +3,8 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-function ENT:OnTakeDamage()
+function ENT:UpdateTransformation()
 end
 
-function ENT:TurningTurret()
+function ENT:PostTransformation()
 end

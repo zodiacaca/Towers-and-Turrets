@@ -10,7 +10,7 @@ ENT.AutomaticFrameAdvance = false
 ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
-ENT.Tower = "tnt_towerbase"
+ENT.Tower = "tnt_dply_towerbase"
 ENT.TowerModel = "models/tnt/tower_base.mdl"
 ENT.TowerIdleSound = nil
 ENT.TowerTurningSound = nil
