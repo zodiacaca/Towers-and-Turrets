@@ -10,12 +10,12 @@ ENT.AutomaticFrameAdvance = false
 ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
-ENT.Tower = "tnt_dply_towerbase"
+ENT.Turret = "tnt_dply_towerbase"
 ENT.TurretModel = "models/tnt/tower_base.mdl"
-ENT.TowerIdleSound = nil
-ENT.TowerTurningSound = nil
-ENT.TowerShootSound = ""
-ENT.TowerReloadSound = ""
+ENT.TurretIdleSound = nil
+ENT.TurretTurningSound = nil
+ENT.TurretShootSound = ""
+ENT.TurretReloadSound = ""
 
 ENT.SettleAnim = false
 ENT.SettleAngleRandom = false

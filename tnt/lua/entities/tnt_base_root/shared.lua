@@ -10,13 +10,14 @@ ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
-ENT.Tower = ""
+ENT.Turret = ""
 ENT.TurretModel = ""
-ENT.TowerIdleSound = nil
-ENT.TowerTurningSound = Sound("TNT_Turret.Turning")
-ENT.TowerShootSound = ""
+ENT.HasBase = false
+ENT.TurretIdleSound = nil
+ENT.TurretTurningSound = Sound("TNT_Turret.Turning")
+ENT.TurretShootSound = ""
 ENT.ImpactExplosionSound = ""
-ENT.TowerReloadSound = ""	-- Default level of the sound is 65
+ENT.TurretReloadSound = ""	-- Default level of the sound is 65
 
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
@@ -33,7 +34,7 @@ ENT.SettleAngleRandom = false
 ENT.CanReload = false
 
 ENT.TurretHealth = 1000
-ENT.TowerRange = 1200
+ENT.TurretRange = 1200
 ENT.HitDamage = 20
 ENT.BlastDamage = 20
 ENT.BlastRadius = 128

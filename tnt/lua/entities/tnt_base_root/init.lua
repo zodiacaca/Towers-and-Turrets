@@ -2,6 +2,7 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
+include("sv_cube.lua")
 
 /*---------------------------------------------------------
    Name: Initialize
@@ -49,22 +50,18 @@ function ENT:Initialize()
 	self.Reloaded = true
 	self:SetReloadTime(CurTime())
 	self.Fires = 0
-	self.Num = 0
-	for k,v in pairs(ents.GetAll()) do
-		if (v.SettleAnim == true) then
-			self.Num = self.Num + 1
-		end
-	end
 	self.Explored = false
 	self.PlanB = false
-	self:SetReady(false)
 	self.Owner = self:GetCreator()
-	self.TurningLoop = CreateSound(self.Entity, self.TowerTurningSound)
+	self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
 
 	self:SetTrigger(true)	-- Touch
 
-	if self.ImpactParticle or self.ImpactEffect then
+	if self.HasBase then
+		self:SetReady(false)
 		self:CreateIndicator()
+	else
+		self:SetReady(true)
 	end
 
 end
@@ -73,56 +70,6 @@ function ENT:PrecacheParticles()
 
 	if self.ImpactParticle != nil then
 		PrecacheParticleSystem(self.ImpactParticle)
-	end
-
-end
-
-function ENT:CreateIndicator()
-
-	local td = {
-		start = self:GetPos(),
-		endpos = self:GetPos() + Vector(0, 0, -33000),
-		filter = { self.Entity }
-		}
-	local tr = util.TraceLine(td)
-
-	if tr.Hit then
-		local pos = tr.HitPos
-		local ent = ents.Create( "tnt_indicator" )
-		if ( IsValid( ent ) ) then
-			ent:SetPos( pos )
-			ent:SetAngles( Angle( 0, 0, 0 ) )
-			ent:Spawn()
-			ent:Activate()
-		end
-	end
-
-end
-
-ENT.NPCCubeOffset = 64
-ENT.NPCCubeRadius = 32
-ENT.NPCCubeCycle = 2
-
-function ENT:CreateNPCCube()
-
-	self.NPCCube = ents.Create( "tnt_npc_cube" )
-	if ( IsValid( self.NPCCube ) ) then
-		self.NPCCube:SetPos( self:GetPos() + self:GetForward() * self.NPCCubeRadius + self:GetUp() * self.NPCCubeOffset )
-		self.NPCCube:SetAngles( Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z ) )
-		self.NPCCube:Spawn()
-		self.NPCCube:Activate()
-	end
-
-end
-
-function ENT:RotateNPCCube(ct)
-
-	if IsValid(self.NPCCube) then
-		local theta = ct * 2 * math.pi / self.NPCCubeCycle
-		self.NPCCube:SetPos( self:GetPos() + self:GetForward() * self.NPCCubeRadius * math.cos(theta) + self:GetRight() * self.NPCCubeRadius * math.sin(theta) + self:GetUp() * self.NPCCubeOffset )
-		local ang = Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z )
-		ang:RotateAroundAxis( self:GetUp(), ct * 360 * 2 / self.NPCCubeCycle )
-		self.NPCCube:SetAngles( ang )
 	end
 
 end
@@ -138,8 +85,8 @@ function ENT:SetSpread( spread )
 	self.Spread = spread/10
 end
 
-function ENT:SetTowerRange( range )
-	self.TowerRange = range
+function ENT:SetTurretRange( range )
+	self.TurretRange = range
 end
 
 function ENT:SetCooldown( cooldown )
@@ -156,95 +103,6 @@ end
 
 function ENT:SetFriends( friend )
 	table.insert(tntfriends, string.lower(friend))
-end
-
-/*---------------------------------------------------------
-   Name: PhysicsCollide
----------------------------------------------------------*/
-local poorbastards = {
-	"npc_citizen",
-	"npc_alyx",
-	"npc_barney",
-	"npc_kleiner",
-	"npc_mossman",
-	"npc_eli",
-	"npc_gman",
-	"npc_breen",
-	"npc_monk",
-	"npc_fassassin",
-	"npc_combine_s",
-	"npc_metropolice",
-	"npc_zombine",
-	"npc_poisonzombine"
-	}
-local vehicle = {
-	"vehicle",
-	"jeep",
-	"car"
-	}
-function ENT:PhysicsCollide(data, phys)
-
-	if not IsValid(self.Entity) then return end
-
-	local angle = self.Entity:GetAngles()
-
-	if !data.HitEntity:IsValid() then
-		self:CollideEffect()
-		if self.SettleAnim then
-			local sequence = self:LookupSequence("settle")
-			self:SetSequence(sequence)
-			self:SetPlaybackRate(1)
-			local time = self:SequenceDuration()
-			timer.Create("tower_ready_"..self.Num.."", time, 1, function() self:SetReady(true) end)
-		else
-			self:SetReady(true)
-		end
-		self.Collided = true
-		self:CreateNPCCube()
-		if math.abs(angle.r) < 45 then
-			self.Entity:DrawShadow(false)
-			phys:EnableMotion(false)
-			phys:Sleep()
-		end
-	elseif data.HitEntity:IsValid() then
-		if table.HasValue(poorbastards, string.lower(data.HitEntity:GetClass())) or data.HitEntity:IsPlayer() then
-			if !self.Collided then
-				local effectdata = EffectData()
-					effectdata:SetOrigin(data.HitEntity:GetPos() + Vector(0, 0, -32))
-					effectdata:SetScale(1.6)
-				util.Effect("m9k_gdcw_tnt_blood_cloud", effectdata)
-			end
-		end
-
-	for i=1,2 do
-		if string.match(data.HitEntity:GetClass(), vehicle[i], 1) then
-			return
-		end
-	end
-
-	if !data.HitEntity:IsPlayer() and math.abs(angle.r) < 15 then
-		if !self.Collided then
-			SafeRemoveEntity(data.HitEntity)
-			end
-		end
-	end
-
-end
-
-function ENT:CollideEffect()
-
-	if self.Collided then return end
-
-	local effectdata = EffectData()
-		effectdata:SetEntity(self.Entity)		// Who done it?
-		effectdata:SetOrigin(self.Entity:GetPos() + Vector(0, 0, -48))
-		effectdata:SetScale(0.8)
-		effectdata:SetMagnitude(50)			// Length of explosion trails
-	util.Effect("m9k_gdcw_tnt_boom", effectdata)
-	util.BlastDamage(self.Entity, self.Entity, self.Entity:GetPos(), 96, 200 )
-	util.ScreenShake(self.Entity:GetPos(), 16, 250, 1, 512)
-	sound.Play("tnt/tower_impact"..math.random(1,3)..".ogg", self.Entity:GetPos(), 150, math.Rand(80,120) * GetConVarNumber("host_timescale"), 1)
-
 end
 
 /*---------------------------------------------------------
@@ -310,6 +168,18 @@ function ENT:Explosion()
 
 	if self.Explored then return end
 
+	if self.HasBase then
+		self:ExplosionEffect()
+	end
+
+	self.Explored = true
+
+	self:Remove()
+
+end
+
+function ENT:ExplosionEffect()
+
 	local pos = self.Entity:GetPos()
 
 	local effectdata = EffectData()
@@ -354,10 +224,6 @@ function ENT:Explosion()
 		phys:EnableMotion(false)
 	end
 
-	self.Explored = true
-
-	self:Remove()
-
 end
 
 local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, TargetBoneIndex
@@ -395,7 +261,7 @@ function ENT:Think()
 
 	local CT = CurTime()
 
-	if self.TowerIdleSound != nil then
+	if self.TurretIdleSound != nil then
 		if self.LoopSound then
 			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
 				self.LoopSound:ChangeVolume(0.5, 0.5)
@@ -404,7 +270,7 @@ function ENT:Think()
 				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
 			end
 		else
-			self.LoopSound = CreateSound(self.Entity, Sound(self.TowerIdleSound))
+			self.LoopSound = CreateSound(self.Entity, Sound(self.TurretIdleSound))
 			self.LoopSound:Play()
 		end
 	end
@@ -622,7 +488,7 @@ function ENT:GetTargetA()
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && (v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool())) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
-				if self.Entity:GetPos():Distance(v:GetPos()) < self.TowerRange then
+				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
 						local target = { ent = v, health = v:Health() }
 						table.insert(targets, target)
@@ -653,7 +519,7 @@ function ENT:GetTargetB()
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && (v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool())) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
-				if self.Entity:GetPos():Distance(v:GetPos()) < self.TowerRange then
+				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
 						local target = { ent = v, health = v:Health() }
 						table.insert(targets, target)
@@ -694,7 +560,7 @@ end
 
 function ENT:TurningSound()
 
-	if self.TowerTurningSound == nil then return end
+	if self.TurretTurningSound == nil then return end
 
 	if self.TurningLoop then
 		if self.p_AngDiff.y != YawDiff.y then
@@ -705,7 +571,7 @@ function ENT:TurningSound()
 			self.TurningLoop:Stop()
 		end
 	else
-		self.TurningLoop = CreateSound(self.Entity, self.TowerTurningSound)
+		self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
 	end
 
 end
@@ -791,7 +657,7 @@ function ENT:Shoot(ct, pos, ang)
 
 		self.Entity:FireBullets(bullet)
 
-		sound.Play(self.TowerShootSound, pos, 100, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1 )
+		sound.Play(self.TurretShootSound, pos, 100, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1 )
 
 		self.LastShoot = ct
 
@@ -857,7 +723,7 @@ function ENT:StartTouch(ent)
 
 		self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
 		SafeRemoveEntity(ent)
-		self.Entity:EmitSound(self.TowerReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
+		self.Entity:EmitSound(self.TurretReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
 		self.Reloaded = false
 
 	end
@@ -897,7 +763,7 @@ function ENT:OnRemove()
 		self.FireSound = nil
 	end
 
-	timer.Destroy("tower_ready_"..self.Num.."")
+	timer.Destroy("tower_ready_"..self:EntIndex())
 	timer.Destroy("tnt_shoot_delay"..self.Entity:EntIndex())
 
 	if IsValid(self.NPCCube) then

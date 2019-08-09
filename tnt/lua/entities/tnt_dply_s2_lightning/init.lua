@@ -19,7 +19,7 @@ function ENT:Think()
 
 	local CT = CurTime()
 
-	if self.TowerIdleSound != nil then
+	if self.TurretIdleSound != nil then
 		if self.LoopSound then
 			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
 				self.LoopSound:ChangeVolume(0.5, 0.5)
@@ -28,7 +28,7 @@ function ENT:Think()
 				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
 			end
 		else
-			self.LoopSound = CreateSound(self.Entity, Sound(self.TowerIdleSound))
+			self.LoopSound = CreateSound(self.Entity, Sound(self.TurretIdleSound))
 			self.LoopSound:Play()
 		end
 	end
@@ -78,7 +78,7 @@ function ENT:GetTargetA()
 	for k,v in pairs(ents.GetAll()) do
 		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.Owner) then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.find(v:GetClass(), "bullseye")) then
-				if self.Entity:GetPos():Distance(v:GetPos()) < self.TowerRange then
+				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
 						local target = { ent = v, health = v:Health() }
 						table.insert(targets, target)

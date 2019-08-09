@@ -8,9 +8,10 @@ ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = false
 
-ENT.Tower = "tnt_dply_s2_lightning"
+ENT.Turret = "tnt_dply_s2_lightning"
 ENT.TurretModel = "models/tnt/lightning_lv3.mdl"
-ENT.TowerIdleSound = Sound("S2_Lightning.Idle")
+ENT.HasBase = true
+ENT.TurretIdleSound = Sound("S2_Lightning.Idle")
 
 ENT.AimAttachment = 1
 ENT.TracerCount = 0
@@ -18,7 +19,7 @@ ENT.TracerCount = 0
 ENT.CanReload = true
 
 ENT.TurretHealth = 1000
-ENT.TowerRange = 600
+ENT.TurretRange = 600
 ENT.HitDamage = 50
 ENT.BlastRadius = 128
 ENT.DamageScale = 1

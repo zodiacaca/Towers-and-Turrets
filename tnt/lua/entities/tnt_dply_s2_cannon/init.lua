@@ -89,7 +89,7 @@ function ENT:Shoot(ct, pos, ang, t)
 
 		end
 
-		sound.Play(self.TowerShootSound, pos, 90, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1)
+		sound.Play(self.TurretShootSound, pos, 90, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1)
 
 		self.LastShoot = ct
 

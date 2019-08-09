@@ -10,13 +10,14 @@ ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
 ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
-ENT.Tower = "tnt_dply_s2_cannon"
+ENT.Turret = "tnt_dply_s2_cannon"
 ENT.TurretModel = "models/tnt/cannon_lv3.mdl"
-ENT.TowerIdleSound = nil
-ENT.TowerTurningSound = Sound("TNT_Turret.Turning")
-ENT.TowerShootSound = Sound("tnt/cannon/tnt_cannon_fire1.wav")
+ENT.HasBase = true
+ENT.TurretIdleSound = nil
+ENT.TurretTurningSound = Sound("TNT_Turret.Turning")
+ENT.TurretShootSound = Sound("tnt/cannon/tnt_cannon_fire1.wav")
 ENT.ImpactExplosionSound = Sound("tnt/explosion1.ogg")
-ENT.TowerReloadSound = Sound("tnt/cannon/tnt_cannon_reload1.wav")	-- Default level of the sound is 65
+ENT.TurretReloadSound = Sound("tnt/cannon/tnt_cannon_reload1.wav")	-- Default level of the sound is 65
 
 ENT.AimAttachment = 1	-- Used for aiming and effects
 ENT.MuzzleScale = 1
@@ -32,7 +33,7 @@ ENT.SettleAngleRandom = true
 ENT.CanReload = true
 
 ENT.TurretHealth = 600
-ENT.TowerRange = 1200
+ENT.TurretRange = 1200
 ENT.HitDamage = 20
 ENT.BlastDamage = 5
 ENT.BlastRadius = 128

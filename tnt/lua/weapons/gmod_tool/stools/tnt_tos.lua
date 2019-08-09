@@ -42,7 +42,7 @@ function TOOL:LeftClick( trace )
 
 	trace.Entity:SetDamageScale( ds )
 	trace.Entity:SetSpread( s )
-	trace.Entity:SetTowerRange( r )
+	trace.Entity:SetTurretRange( r )
 	trace.Entity:SetCooldown( cd )
 	trace.Entity:SetBlastRadius( br )
 	trace.Entity:SetTakeAmmoPerShoot( taps )
@@ -58,7 +58,7 @@ function TOOL:RightClick( trace )
 
 	local ds  = trace.Entity.DamageScale
 	local s  = trace.Entity.Spread * 10
-	local r  = trace.Entity.TowerRange
+	local r  = trace.Entity.TurretRange
 	local cd  = trace.Entity.Cooldown
 	local br  = trace.Entity.BlastRadius
 	local taps  = trace.Entity.TakeAmmoPerShoot

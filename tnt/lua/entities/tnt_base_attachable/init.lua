@@ -223,7 +223,7 @@ function ENT:Think()
 
 	local CT = CurTime()
 
-	if self.TowerIdleSound != nil then
+	if self.TurretIdleSound != nil then
 		if self.LoopSound then
 			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
 				self.LoopSound:ChangeVolume(0, 0.5)
@@ -232,7 +232,7 @@ function ENT:Think()
 				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
 			end
 		else
-			self.LoopSound = CreateSound(self.Entity, Sound(self.TowerIdleSound))
+			self.LoopSound = CreateSound(self.Entity, Sound(self.TurretIdleSound))
 			self.LoopSound:Play()
 		end
 	end
