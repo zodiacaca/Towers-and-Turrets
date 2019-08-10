@@ -10,41 +10,10 @@ function ENT:PrecacheParticles()
 
 end
 
-function ENT:Think()
-
-	if !self.Collided then
-		local phys = self:GetPhysicsObject()
-		if ( IsValid( phys ) ) then phys:AddVelocity( -self:GetUp() * 16 ) end
-	end
-
-	local CT = CurTime()
-
-	if self.TurretIdleSound != nil then
-		if self.LoopSound then
-			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
-				self.LoopSound:ChangeVolume(0.5, 0.5)
-			else
-				self.LoopSound:ChangeVolume(1, 0.5)
-				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
-			end
-		else
-			self.LoopSound = CreateSound(self.Entity, Sound(self.TurretIdleSound))
-			self.LoopSound:Play()
-		end
-	end
-
-	self:TurningTurret(CT)
-	self:Recoil(CT)
-	self:ReloadAmmo(CT)
-
-	self:NextThink(CurTime())
-
-	return true
-end
-
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
+	if !IsValid(self.NPCCube) then self.TurningLoop:Stop() return end
 
 	self.Target = self:GetTargetA()
 
@@ -76,7 +45,7 @@ function ENT:GetTargetA()
 	local targets = {}
 
 	for k,v in pairs(ents.GetAll()) do
-		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.Owner) then
+		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.Owner) and v != self.NPCCube then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.find(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
@@ -98,7 +67,7 @@ function ENT:GetTargetA()
 
 end
 
-function ENT:Shoot(ct, t)
+function ENT:Shoot(ct)
 
 	if (self:GetRounds() >= self.TakeAmmoPerShoot) then
 
@@ -134,7 +103,7 @@ function ENT:Shoot(ct, t)
 
 			for k,v in pairs(ents.FindInSphere(tpos, self.BlastRadius)) do
 				if IsValid(v) and (v:IsPlayer() or v:IsNPC()) then
-					if !(v == t) then
+					if !(v == t) and v != self.NPCCube then
 						if v:IsLineOfSightClear(tpos) then
 							self.ShockVictims = self.ShockVictims + 1
 							timer.Create("tnt_shock_delay"..self.Entity:EntIndex()..self.ShockVictims, 0.1, 1, function()
@@ -168,6 +137,22 @@ function ENT:Shoot(ct, t)
 		end
 
 		self.LastShoot = ct
+
+	else
+
+		for id, ent in pairs(ents.FindInSphere(self:GetPos(), 128)) do
+			if string.match(ent:GetClass(), "ammo", 0) then
+
+				self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
+				self:SetRounds(self.ClipSize)
+				self.Entity:EmitSound(self.TurretReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
+
+				ent:Remove()
+
+				break
+
+			end
+		end
 
 	end
 
@@ -204,6 +189,13 @@ function ENT:OnRemove()
 	if self.FireSound then
 		self.FireSound:Stop()
 		self.FireSound = nil
+	end
+
+	timer.Destroy("tower_ready_"..self:EntIndex())
+	timer.Destroy("tnt_shoot_delay"..self.Entity:EntIndex())
+
+	if IsValid(self.NPCCube) then
+		self.NPCCube:Remove()
 	end
 
 	if self.ShockVictims then

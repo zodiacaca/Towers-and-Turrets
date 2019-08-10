@@ -36,19 +36,14 @@ function ENT:Recoil(ct)
 
 end
 
-function ENT:Shoot(ct, pos, ang, t)
+function ENT:Shoot(ct, pos, ang)
 
 	if (self:GetRounds() >= self.TakeAmmoPerShoot) then
 
 		self:SetRounds(self:GetRounds() - self.TakeAmmoPerShoot)
 
-		local damagemod = 1
-		if t:IsValid() and t:IsPlayer() then
-			damagemod = 0.2
-		end
-
 		local dice = math.Rand(0.9,1.15)
-		local damage = self.BlastDamage * self.DamageScale * dice * damagemod
+		local damage = self.BlastDamage * self.DamageScale * dice
 
 		local Muzzle_FX = EffectData()
 			Muzzle_FX:SetEntity(self.Entity)
@@ -70,9 +65,9 @@ function ENT:Shoot(ct, pos, ang, t)
 				bullet.Src 		= self.Entity:GetAttachment(i+1).Pos			-- Source
 				bullet.Dir 		= self.Entity:GetAttachment(i+1).Ang:Forward()			-- Dir of bullet
 				bullet.Spread 	= Vector(self.Spread, self.Spread, 0)		-- Aim Cone
-				bullet.Tracer	= self.TracerCount									-- Show a tracer on every x bullets3
+				bullet.Tracer	= self.TracerCount									-- Show a tracer on every x bullets
 				bullet.Force	= self.HitDamage * 0.75									-- Amount of force to give to phys objects
-				bullet.Damage	= self.HitDamage * self.DamageScale * dice * damagemod
+				bullet.Damage	= self.HitDamage * self.DamageScale * dice
 				bullet.AmmoType = "Pistol"
 				bullet.TracerName = self.TracerType
 				bullet.Callback	= function(attacker, tracedata, dmginfo)
@@ -92,6 +87,22 @@ function ENT:Shoot(ct, pos, ang, t)
 		sound.Play(self.TurretShootSound, pos, 90, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1)
 
 		self.LastShoot = ct
+
+	else
+
+		for id, ent in pairs(ents.FindInSphere(self:GetPos(), 128)) do
+			if string.match(ent:GetClass(), "ammo", 0) then
+
+				self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
+				self:SetRounds(self.ClipSize)
+				self.Entity:EmitSound(self.TurretReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
+
+				ent:Remove()
+
+				break
+
+			end
+		end
 
 	end
 

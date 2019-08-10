@@ -688,7 +688,7 @@ function ENT:Shoot(ct, pos, ang)
 
 	else
 
-		for ent in ents.FindInSphere(self:GetPos(), 128) do
+		for id, ent in pairs(ents.FindInSphere(self:GetPos(), 128)) do
 			if string.match(ent:GetClass(), "ammo", 0) then
 
 				self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
