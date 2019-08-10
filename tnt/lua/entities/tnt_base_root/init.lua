@@ -254,7 +254,7 @@ end
 ---------------------------------------------------------*/
 function ENT:Think()
 
-	if !self.Collided then
+	if self.HasBase and !self.Collided then
 		local phys = self:GetPhysicsObject()
 		if ( IsValid( phys ) ) then phys:AddVelocity( -self:GetUp() * 16 ) end
 	end
@@ -264,7 +264,7 @@ function ENT:Think()
 	if self.TurretIdleSound != nil then
 		if self.LoopSound then
 			if !(self:GetReady() == true) or !(CT > self:GetReloadTime()) then
-				self.LoopSound:ChangeVolume(0.5, 0.5)
+				self.LoopSound:ChangeVolume(0, 0.5)
 			else
 				self.LoopSound:ChangeVolume(1, 0.5)
 				self.LoopSound:ChangePitch(100 * GetConVarNumber("host_timescale"))
@@ -327,10 +327,24 @@ function ENT:UpdateTarget(ct, target)
 
 end
 
+-- ENT.Time = 0
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end
 	if !IsValid(self.NPCCube) then self.TurningLoop:Stop() return end
+
+	-- if ct > self.Time then
+		-- self.Time = ct + 3
+		-- local tbl = {
+			-- ["tgt_time"] = self.LastTargetTime,
+			-- ["delay"] = self.UpdateDelay,
+			-- ["planB"] = self.PlanB,
+			-- ["tgt"] = self.Target,
+			-- ["old_tgt"] = self.OldTarget,
+			-- ["tgt = old_tgt"] = (self.Target == self.OldTarget)
+		-- }
+		-- PrintTable(tbl)
+	-- end
 
 	if self.PlanB then
 		self.Target = self:GetTargetB()
@@ -435,7 +449,7 @@ function ENT:TurningTurret(ct)
 		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x, 0, 0))
 		-- print(PitchDiff.x)
 		self:TurningSound()
-		self:Aiming(ct, self.Target)
+		self:Aiming(ct)
 
 	else
 
@@ -490,8 +504,13 @@ function ENT:GetTargetA()
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
-						local target = { ent = v, health = v:Health() }
-						table.insert(targets, target)
+						if IsValid(self.Owner) then
+							local target = { ent = v, health = v:Health(), dist = self.Owner:GetPos():Distance(v:GetPos()) }
+							table.insert(targets, target)
+						else
+							local target = { ent = v, health = v:Health() }
+							table.insert(targets, target)
+						end
 					end
 				end
 			end
@@ -521,8 +540,13 @@ function ENT:GetTargetB()
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
-						local target = { ent = v, health = v:Health() }
-						table.insert(targets, target)
+						if IsValid(self.Owner) then
+							local target = { ent = v, health = v:Health(), dist = self.Owner:GetPos():Distance(v:GetPos()) }
+							table.insert(targets, target)
+						else
+							local target = { ent = v, health = v:Health() }
+							table.insert(targets, target)
+						end
 					end
 				end
 			end
@@ -576,7 +600,7 @@ function ENT:TurningSound()
 
 end
 
-function ENT:Aiming(ct, t)
+function ENT:Aiming(ct)
 
 	if self.AimAttachment == nil then
 		print("AimAttachment expected, got nil")
@@ -600,7 +624,7 @@ function ENT:Aiming(ct, t)
 	if (ct > (self.LastShoot + self.Cooldown)) then
 		if tr.Entity:IsValid() and ((!GetConVar("tnt_attack_owner"):GetBool() and !(tr.Entity == self.Owner)) or GetConVar("tnt_attack_owner"):GetBool()) then
 			timer.Create("tnt_shoot_delay"..self.Entity:EntIndex(), math.random(0.003, 0.006), 1, function()
-				self:Shoot(ct, AttPos, AttAng, t)
+				self:Shoot(ct, AttPos, AttAng)
 			end)
 		end
 	end
@@ -613,15 +637,11 @@ function ENT:Shoot(ct, pos, ang)
 
 		self:SetRounds(self:GetRounds() - self.TakeAmmoPerShoot)
 
-		local damagemod = 1
-		if t:IsValid() and t:IsPlayer() then
-			damagemod = 0.1
-		end
-
 		local dice = math.Rand(0.9,1.15)
-		local damage = self.BlastDamage * self.DamageScale * dice * damagemod
+		local damage = self.BlastDamage * self.DamageScale * dice
 
 		self:MuzzleEffects(pos, ang)
+		self:EjectCasing(pos, ang)
 		util.ScreenShake(pos, 0.02 * damage, 0.05 * damage, 0.75, 2 * self.BlastRadius)
 
 		local bullet = {}
@@ -648,7 +668,7 @@ function ENT:Shoot(ct, pos, ang)
 					end
 					local Impact_Light = EffectData()
 						Impact_Light:SetOrigin(tracedata.HitPos)
-					util.Effect("tnt_effect_light", effectdata2)
+					util.Effect("tnt_effect_light", Impact_Light)
 					util.BlastDamage(self.Entity, self.Entity, tracedata.HitPos, self.BlastRadius, damage)
 					sound.Play(self.ImpactExplosionSound, tracedata.HitPos, 100, 100 * GetConVarNumber("host_timescale"), 1)
 					util.ScreenShake(tracedata.HitPos, 0.2 * damage, 1 * damage, 0.75, 1 * self.BlastRadius)
@@ -659,7 +679,28 @@ function ENT:Shoot(ct, pos, ang)
 
 		sound.Play(self.TurretShootSound, pos, 100, math.Rand(95,105) * GetConVarNumber("host_timescale"), 1 )
 
+		if !self.HasBase then
+			local phys = self:GetPhysicsObject()
+			if ( IsValid( phys ) ) then phys:AddVelocity( -ang:Forward() * (0.6 * self.BlastDamage + 3 * self.HitDamage)) end
+		end
+
 		self.LastShoot = ct
+
+	else
+
+		for ent in ents.FindInSphere(self:GetPos(), 128) do
+			if string.match(ent:GetClass(), "ammo", 0) then
+
+				self:SetReloadTime(CurTime() + 1/self.ReloadSpeed)
+				self:SetRounds(self.ClipSize)
+				self.Entity:EmitSound(self.TurretReloadSound, 65, 100 * GetConVarNumber("host_timescale"))
+
+				ent:Remove()
+
+				break
+
+			end
+		end
 
 	end
 
@@ -678,6 +719,17 @@ function ENT:MuzzleEffects(p, a)
 		Muzzle_Light:SetOrigin(p)
 		Muzzle_Light:SetScale(self.MuzzleLightScale)
 	util.Effect("tnt_effect_light", Muzzle_Light)
+
+end
+
+function ENT:EjectCasing(p, a)
+
+	if self.EjectEffect != nil then
+		local ShellEject = EffectData()
+			ShellEject:SetOrigin(p + a:Forward() * self.EjectOffset)
+			ShellEject:SetAngles(a + Angle(60, -120, 0))
+		util.Effect(self.EjectEffect, ShellEject)
+	end
 
 end
 

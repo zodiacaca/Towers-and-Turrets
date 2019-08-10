@@ -278,12 +278,3 @@ function ENT:Aiming(ct)
 	end
 
 end
-
-function ENT:ReloadAmmo(ct)
-
-	if !self.Reloaded and (ct > self:GetReloadTime()) then
-		self:SetRounds(self.ClipSize)
-		self.Reloaded = true
-	end
-
-end
