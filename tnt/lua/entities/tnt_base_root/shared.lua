@@ -67,6 +67,11 @@ ENT.HasDamagedState = false
 ENT.FiresOffset = 20
 ENT.FiresHeight = 42
 
+ENT.NPCCubeHealth = 100
+ENT.NPCCubeOffset = 64
+ENT.NPCCubeRadius = 32
+ENT.NPCCubeCycle = 2
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Ready" )
 	self:NetworkVar( "Float", 1, "Rounds" )

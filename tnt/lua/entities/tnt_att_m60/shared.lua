@@ -33,7 +33,7 @@ ENT.CanReload = true
 
 ENT.TurretHealth = 300
 ENT.TurretRange = 2500
-ENT.HitDamage = 20
+ENT.HitDamage = 5
 ENT.BlastDamage = 0
 ENT.BlastRadius = 0
 ENT.DamageScale = 1
@@ -68,3 +68,8 @@ ENT.FiresOffset = 0
 ENT.FiresHeight = 0
 
 ENT.DisplayOffset = -46
+
+ENT.NPCCubeHealth = 50
+ENT.NPCCubeOffset = 8
+ENT.NPCCubeRadius = 32
+ENT.NPCCubeCycle = 2

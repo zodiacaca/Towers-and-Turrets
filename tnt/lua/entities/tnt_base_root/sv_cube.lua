@@ -1,8 +1,4 @@
 
-ENT.NPCCubeOffset = 64
-ENT.NPCCubeRadius = 32
-ENT.NPCCubeCycle = 2
-
 function ENT:CreateNPCCube()
 
 	self.NPCCube = ents.Create( "tnt_npc_cube" )
@@ -11,6 +7,8 @@ function ENT:CreateNPCCube()
 		self.NPCCube:SetAngles( Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z ) )
 		self.NPCCube:Spawn()
 		self.NPCCube:Activate()
+
+		self.NPCCube:SetHealth(self.NPCCubeHealth)
 	end
 
 end

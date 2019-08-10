@@ -62,6 +62,9 @@ function ENT:Initialize()
 		self:CreateIndicator()
 	else
 		self:SetReady(true)
+		if !string.find(self.Turret, "ctrl") then
+			self:CreateNPCCube()
+		end
 	end
 
 end

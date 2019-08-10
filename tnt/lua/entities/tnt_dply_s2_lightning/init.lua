@@ -10,6 +10,12 @@ function ENT:PrecacheParticles()
 
 end
 
+function ENT:UpdateTransformation()
+end
+
+function ENT:PostTransformation()
+end
+
 function ENT:TurningTurret(ct)
 
 	if GetConVar("ai_disabled"):GetBool() then return end

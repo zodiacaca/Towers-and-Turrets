@@ -67,3 +67,8 @@ ENT.FiresOffset = 15
 ENT.FiresHeight = 16
 
 ENT.DisplayOffset = -72
+
+ENT.NPCCubeHealth = 80
+ENT.NPCCubeOffset = 16
+ENT.NPCCubeRadius = 32
+ENT.NPCCubeCycle = 2

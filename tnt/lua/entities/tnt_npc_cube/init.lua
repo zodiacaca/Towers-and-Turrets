@@ -15,7 +15,6 @@ function ENT:Initialize()
 	self.Entity:SetModelScale(0)
 	self.Entity:SetModelScale(0.8, 0.5)
 	self.Entity:SetSubMaterial(0, "debug/env_cubemap_model")
-	self.Entity:SetHealth(100)
 
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 
