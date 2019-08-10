@@ -5,60 +5,6 @@ include("shared.lua")
 
 include("entities/tnt_att_m60/exclusive_effects.lua")
 
-
-function ENT:Initialize()
-
-	self:PrecacheParticles()
-
-	local model = (self.TurretModel)
-
-	self.Entity:SetModel(model)
-
-	self.Entity:PhysicsInit(SOLID_VPHYSICS)
-	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-	self.Entity:SetSolid(SOLID_VPHYSICS)
-	self.Entity:DrawShadow(false)
-
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
-		-- phys:EnableGravity(false)
-		-- phys:EnableCollisions(false)
-		-- phys:EnableMotion(false)
-		-- phys:EnableDrag(false)
-		phys:Wake()
-	end
-
-	self.Entity:SetUseType(SIMPLE_USE)
-
-	self:SetHealth(self.TurretHealth)
-
-	if self.SettleAngleRandom then
-		self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.AimYawBone), Angle(0, math.random(0,360), 0))
-	end
-
-	self:InitMeta()
-
-	self.LastShoot = CurTime()
-	self:SetRounds(self.ClipSize)
-	self.Reloaded = true
-	self:SetReloadTime(CurTime())
-	self.LoopDelay = 0
-	self.Fires = 0
-	self.Num = 0
-	self.Explored = false
-	self.PlanB = false
-	self:SetReady(true)
-	self.Owner = self:GetCreator()
-	self:SetTurretOwner(self.Owner)
-
-	self.YawMotorThrottle = 0
-	self.PitchMotorThrottle = 0
-	self.MinTheta = { x = 0, y = 0 }
-
-	self:SetTrigger(true)	-- Touch
-
-end
-
 function ENT:GetTracer()
 
 	local td = {}
@@ -140,7 +86,6 @@ end
 
 function ENT:TurningTurret(ct)
 
-	self:ReloadAmmo(ct)
 	if (self:GetReady() == true) and self.Owner:IsValid() and self.Owner:InVehicle() and (ct > self:GetReloadTime()) then
 
 		-- Angles between the target and the bones

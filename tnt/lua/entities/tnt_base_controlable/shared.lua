@@ -1,6 +1,6 @@
 
 ENT.Type 			= "anim"
-ENT.Base 			= "tnt_base_attachable"
+ENT.Base 			= "tnt_base_root"
 ENT.PrintName	= "tnt_base_controlable"
 ENT.Category		= "Towers and Turrets"
 
