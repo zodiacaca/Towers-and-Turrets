@@ -8,6 +8,7 @@ function ENT:CreateNPCCube()
 		self.NPCCube:Spawn()
 		self.NPCCube:Activate()
 
+		constraint.NoCollide(self, self.NPCCube, 0, 0)
 		self.NPCCube:SetHealth(self.NPCCubeHealth)
 	end
 
