@@ -58,7 +58,7 @@ ENT.RecoilBoneAdditional_2 = "Slave_Barrel_R"
 ENT.RotateSpeed = 8
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
-ENT.UpdateDelayShort =0.5
+ENT.UpdateDelayShort = 0.5
 
 ENT.RecoilOffset = 200
 ENT.RecoilRecoverPerThink = 12.5 -- Use a number that the result of 1 divide this number is still a rational number

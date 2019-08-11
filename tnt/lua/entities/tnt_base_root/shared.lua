@@ -1,7 +1,7 @@
 
 ENT.Type 			= "anim"
 ENT.Base 			= "base_anim"
-ENT.PrintName	= "tnt_base_deployable"
+ENT.PrintName	= "tnt_base_root"
 ENT.Category		= "Towers and Turrets"
 
 ENT.Spawnable			= false
@@ -44,6 +44,9 @@ ENT.ClipSize = 30
 ENT.TakeAmmoPerShoot = 1
 ENT.Cooldown = 2
 
+ENT.EjectEffect = nil
+ENT.EjectOffset = 0
+
 ENT.AimYawBone = ""
 ENT.AimPitchBone = ""	-- These two bones can be the same bone or different like this one
 ENT.AimHeight = 128	-- The height of the gun
@@ -58,7 +61,7 @@ ENT.RotateSpeed = 35
 ENT.RotateSpeedRatio = 0.75
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
-ENT.UpdateDelayShort =0.5
+ENT.UpdateDelayShort = 0.5
 
 ENT.RecoilOffset = 200
 ENT.RecoilRecoverPerThink = 12.5 -- Use a number that the result of 1 divide this number is still a rational number
@@ -66,6 +69,8 @@ ENT.RecoilRecoverPerThink = 12.5 -- Use a number that the result of 1 divide thi
 ENT.HasDamagedState = false
 ENT.FiresOffset = 20
 ENT.FiresHeight = 42
+
+ENT.DisplayOffset = -72
 
 ENT.NPCCubeHealth = 100
 ENT.NPCCubeOffset = 64

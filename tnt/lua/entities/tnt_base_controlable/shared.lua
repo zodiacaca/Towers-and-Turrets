@@ -28,7 +28,6 @@ ENT.ImpactParticle = nil
 ENT.ImpactEffect = nil
 ENT.ImpactScale = 0
 
-ENT.SettleAnim = false
 ENT.SettleAngleRandom = false
 ENT.CanReload = true	-- not used, only literal meaning here
 

@@ -17,6 +17,5 @@ ENT.TurretTurningSound = nil
 ENT.TurretShootSound = ""
 ENT.TurretReloadSound = ""
 
-ENT.SettleAnim = false
 ENT.SettleAngleRandom = false
 ENT.CanReload = false
