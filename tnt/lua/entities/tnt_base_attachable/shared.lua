@@ -69,9 +69,3 @@ ENT.FiresOffset = 20
 ENT.FiresHeight = 42
 
 ENT.DisplayOffset = -72
-
-function ENT:SetupDataTables()
-	self:NetworkVar( "Bool", 0, "Ready" )
-	self:NetworkVar( "Float", 1, "Rounds" )
-	self:NetworkVar( "Float", 2, "ReloadTime" )
-end

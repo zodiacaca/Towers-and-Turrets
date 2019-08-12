@@ -50,8 +50,8 @@ function ENT:GetTargetA()
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
-						if IsValid(self.Owner) then
-							local target = { ent = v, health = v:Health(), dist = self.Owner:GetPos():Distance(v:GetPos()) }
+						if IsValid(self:GetCreator()) then
+							local target = { ent = v, health = v:Health(), dist = self:GetCreator():GetPos():Distance(v:GetPos()) }
 							table.insert(targets, target)
 						else
 							local target = { ent = v, health = v:Health() }
@@ -86,8 +86,8 @@ function ENT:GetTargetB()
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.match(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
-						if IsValid(self.Owner) then
-							local target = { ent = v, health = v:Health(), dist = self.Owner:GetPos():Distance(v:GetPos()) }
+						if IsValid(self:GetCreator()) then
+							local target = { ent = v, health = v:Health(), dist = self:GetCreator():GetPos():Distance(v:GetPos()) }
 							table.insert(targets, target)
 						else
 							local target = { ent = v, health = v:Health() }

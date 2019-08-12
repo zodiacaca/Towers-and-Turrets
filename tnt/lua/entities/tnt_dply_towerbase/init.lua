@@ -48,7 +48,6 @@ function ENT:Initialize()
 	self.Fires = 0
 	self.Explored = false
 	self.PlanB = false
-	self.Owner = self:GetCreator()
 	self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
 
 	self:SetTrigger(true)	-- Touch

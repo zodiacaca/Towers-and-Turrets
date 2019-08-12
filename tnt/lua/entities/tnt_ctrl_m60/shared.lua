@@ -67,10 +67,3 @@ ENT.FiresOffset = 0
 ENT.FiresHeight = 0
 
 ENT.DisplayOffset = -46
-
-function ENT:SetupDataTables()
-	self:NetworkVar( "Bool", 0, "Ready" )
-	self:NetworkVar( "Float", 1, "Rounds" )
-	self:NetworkVar( "Float", 2, "ReloadTime" )
-	self:NetworkVar( "Entity", 3, "TurretOwner" )
-end

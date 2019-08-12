@@ -64,9 +64,3 @@ ENT.RecoilRecoverPerThink = 12.5 -- Use a number that the result of 1 divide thi
 ENT.HasDamagedState = false
 ENT.FiresOffset = 20
 ENT.FiresHeight = 42
-
-function ENT:SetupDataTables()
-	self:NetworkVar( "Bool", 0, "Ready" )
-	self:NetworkVar( "Float", 1, "Rounds" )
-	self:NetworkVar( "Float", 2, "ReloadTime" )
-end

@@ -8,9 +8,9 @@ include("entities/tnt_att_m60/exclusive_effects.lua")
 function ENT:GetTracer()
 
 	local td = {}
-		td.start = self.Owner:EyePos() + self.Owner:EyeAngles():Forward() * 256
-		td.endpos = td.start + self.Owner:EyeAngles():Forward() * 30000
-		td.filter = { self.Entity, self.Owner }
+		td.start = self:GetCreator():EyePos() + self:GetCreator():EyeAngles():Forward() * 256
+		td.endpos = td.start + self:GetCreator():EyeAngles():Forward() * 30000
+		td.filter = { self.Entity, self:GetCreator() }
 	local tr = util.TraceLine(td)
 
 	return tr
@@ -86,7 +86,7 @@ end
 
 function ENT:TurningTurret(ct)
 
-	if (self:GetReady() == true) and self.Owner:IsValid() and self.Owner:InVehicle() and (ct > self:GetReloadTime()) then
+	if (self:GetReady() == true) and self:GetCreator():IsValid() and self:GetCreator():InVehicle() and (ct > self:GetReloadTime()) then
 
 		-- Angles between the target and the bones
 		self.AimPosition_w = self:GetTracer().HitPos
@@ -217,7 +217,7 @@ function ENT:Aiming(ct)
 	self.AttAng = self.Entity:GetAttachment(self.AimAttachment).Ang
 
 	if (ct > (self.LastShoot + self.Cooldown)) then
-		if self.Owner:KeyDown(GetConVarNumber("tnt_turret_fire")) then
+		if self:GetCreator():KeyDown(GetConVarNumber("tnt_turret_fire")) then
 			self:Shoot(ct, self.AttPos, self.AttAng)
 		end
 	end

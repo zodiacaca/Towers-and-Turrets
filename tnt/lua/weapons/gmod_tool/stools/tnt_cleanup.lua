@@ -19,10 +19,10 @@ end
 
 function TOOL:LeftClick( trace )
 
-	if ( CLIENT ) or !self:GetOwner():KeyDown(IN_USE) then return end
+	if ( CLIENT ) or !self:GetCreator():KeyDown(IN_USE) then return end
 
-	if !self:GetOwner():IsAdmin() then
-		self:GetOwner():ChatPrint("You need to be an admin to use this tool.")
+	if !self:GetCreator():IsAdmin() then
+		self:GetCreator():ChatPrint("You need to be an admin to use this tool.")
 		return
 	end
 
@@ -33,17 +33,17 @@ function TOOL:LeftClick( trace )
 			self:DoRemoveEntity(v)
 		end
 	end
-	self:GetOwner():PrintMessage( HUD_PRINTTALK, "".. Selected .." towers were removed." )
+	self:GetCreator():PrintMessage( HUD_PRINTTALK, "".. Selected .." towers were removed." )
 
 	return true
 end
 
 function TOOL:RightClick( trace )
 
-	if ( CLIENT ) or !self:GetOwner():KeyDown(IN_USE) then return end
+	if ( CLIENT ) or !self:GetCreator():KeyDown(IN_USE) then return end
 
-	if !self:GetOwner():IsAdmin() then
-		self:GetOwner():ChatPrint("You need to be an admin to use this tool.")
+	if !self:GetCreator():IsAdmin() then
+		self:GetCreator():ChatPrint("You need to be an admin to use this tool.")
 		return
 	end
 
@@ -54,7 +54,7 @@ function TOOL:RightClick( trace )
 			self:DoRemoveEntity(v)
 		end
 	end
-	self:GetOwner():PrintMessage( HUD_PRINTTALK, "".. Selected .." turrets were removed." )
+	self:GetCreator():PrintMessage( HUD_PRINTTALK, "".. Selected .." turrets were removed." )
 
 	return true
 end

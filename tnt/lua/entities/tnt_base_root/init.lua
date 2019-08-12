@@ -4,6 +4,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 include("sv_damage.lua")
+include("sv_target.lua")
 include("sv_shoot.lua")
 include("sv_interact.lua")
 include("sv_remove.lua")
@@ -57,7 +58,6 @@ function ENT:Initialize()
 	self.Fires = 0
 	self.Explored = false
 	self.PlanB = false
-	self.Owner = self:GetCreator()
 	self.TurningLoop = CreateSound(self.Entity, self.TurretTurningSound)
 
 	self:SetTrigger(true)	-- Touch

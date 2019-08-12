@@ -71,19 +71,19 @@ function TOOL:RightClick( trace )
 		local taps  = trace.Entity.TakeAmmoPerShoot
 		local ready  = tostring(trace.Entity:GetReady())
 
-		self:GetOwner():ChatPrint( "Turret Ready is "..ready.."" )
-		self:GetOwner():ChatPrint( "Damage Scale: "..ds.."" )
-		self:GetOwner():ChatPrint( "Spread(*10): "..s.."" )
-		self:GetOwner():ChatPrint( "Range: "..r.."" )
-		self:GetOwner():ChatPrint( "Cooldown: "..cd.."" )
-		self:GetOwner():ChatPrint( "Blast Radius: "..br.."" )
-		self:GetOwner():ChatPrint( "Take Ammo Per Shoot: "..taps.."" )
-		self:GetOwner():ConCommand( "tnt_tus_scale "..ds )
-		self:GetOwner():ConCommand( "tnt_tus_spread "..s )
-		self:GetOwner():ConCommand( "tnt_tus_range "..r )
-		self:GetOwner():ConCommand( "tnt_tus_cooldown "..cd )
-		self:GetOwner():ConCommand( "tnt_tus_br "..br )
-		self:GetOwner():ConCommand( "tnt_tu_taps "..taps )
+		self:GetCreator():ChatPrint( "Turret Ready is "..ready.."" )
+		self:GetCreator():ChatPrint( "Damage Scale: "..ds.."" )
+		self:GetCreator():ChatPrint( "Spread(*10): "..s.."" )
+		self:GetCreator():ChatPrint( "Range: "..r.."" )
+		self:GetCreator():ChatPrint( "Cooldown: "..cd.."" )
+		self:GetCreator():ChatPrint( "Blast Radius: "..br.."" )
+		self:GetCreator():ChatPrint( "Take Ammo Per Shoot: "..taps.."" )
+		self:GetCreator():ConCommand( "tnt_tus_scale "..ds )
+		self:GetCreator():ConCommand( "tnt_tus_spread "..s )
+		self:GetCreator():ConCommand( "tnt_tus_range "..r )
+		self:GetCreator():ConCommand( "tnt_tus_cooldown "..cd )
+		self:GetCreator():ConCommand( "tnt_tus_br "..br )
+		self:GetCreator():ConCommand( "tnt_tu_taps "..taps )
 
 		return true
 
@@ -97,7 +97,7 @@ function TOOL:Reload( trace )
 
 	if ( SERVER ) then
 
-		if self:GetOwner():KeyDown(IN_USE) then
+		if self:GetCreator():KeyDown(IN_USE) then
 
 			for k,v in pairs(ents.GetAll()) do
 				if v.Base == "tnt_base_deployable" or v.Base == "tnt_base_controlable" or v.Base == "tnt_base_attachable" then

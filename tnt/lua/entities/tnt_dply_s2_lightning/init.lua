@@ -51,7 +51,7 @@ function ENT:GetTargetA()
 	local targets = {}
 
 	for k,v in pairs(ents.GetAll()) do
-		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self.Owner) and v != self.NPCCube then
+		if v:IsValid() && (table.HasValue(catchThem, string.lower(v:GetClass())) or v:IsNPC() or (v:IsPlayer() and !GetConVar("ai_ignoreplayers"):GetBool() and GetConVar("tnt_attack_player"):GetBool()) and v != self:GetCreator()) and v != self.NPCCube then
 			if !(table.HasValue(tntfriends, string.lower(v:GetClass())) || table.HasValue(tntfilter, string.lower(v:GetClass())) || string.find(v:GetClass(), "bullseye")) then
 				if self.Entity:GetPos():Distance(v:GetPos()) < self.TurretRange then
 					if v:IsLineOfSightClear(self.Entity:GetPos() + self:GetUp() * self.AimHeight) and v:Health() > 0 then
