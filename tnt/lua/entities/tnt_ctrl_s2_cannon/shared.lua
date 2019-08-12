@@ -37,8 +37,8 @@ ENT.BlastDamage = 5
 ENT.BlastRadius = 128
 ENT.DamageScale = 1
 ENT.Spread = 0.002
-ENT.ClipSize = 1
-ENT.TakeAmmoPerShoot = 0
+ENT.ClipSize = 100
+ENT.TakeAmmoPerShoot = 1
 ENT.Cooldown = 0.75
 
 ENT.EjectEffect = nil
@@ -56,7 +56,7 @@ ENT.RecoilBone = "Slave_Barrel"
 
 ENT.RotateSpeed = 3.75
 ENT.RotateSpeedRatio = 0.75
-ENT.ReloadSpeed = 0
+ENT.ReloadSpeed = 0.15
 
 ENT.RecoilOffset = 200
 ENT.RecoilRecoverPerThink = 12.5 -- Use a number that the result of 1 divide this number is still a rational number

@@ -7,7 +7,7 @@ ENT.Category		= "Towers and Turrets"
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = true
-ENT.AdminOnly = true
+ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
 ENT.Turret = "tnt_att_m60"

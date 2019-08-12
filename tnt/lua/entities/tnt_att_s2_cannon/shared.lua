@@ -7,7 +7,7 @@ ENT.Category		= "Towers and Turrets"
 ENT.Spawnable			= true
 ENT.AdminSpawnable	= true
 ENT.AutomaticFrameAdvance = true	-- Animations will look smooth
-ENT.AdminOnly = true
+ENT.AdminOnly = false
 ENT.DoNotDuplicate = false
 
 ENT.Turret = "tnt_att_s2_cannon"
@@ -37,8 +37,8 @@ ENT.BlastDamage = 5
 ENT.BlastRadius = 128
 ENT.DamageScale = 1
 ENT.Spread = 0.002
-ENT.ClipSize = 1
-ENT.TakeAmmoPerShoot = 0
+ENT.ClipSize = 100
+ENT.TakeAmmoPerShoot = 1
 ENT.Cooldown = 0.5
 
 ENT.EjectEffect = nil
@@ -55,7 +55,7 @@ ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = "Slave_Barrel"
 
 ENT.RotateSpeed = 8
-ENT.ReloadSpeed = 0
+ENT.ReloadSpeed = 0.15
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort = 0.5
 
