@@ -16,8 +16,8 @@ end
 function ENT:LaserDot()
 
 	if !(self:GetReady() == true) then return end
-	if LocalPlayer() != self:GetCreator() then return end
-	if !self:GetCreator():InVehicle() then return end
+	if LocalPlayer() != self:GetTurretOwner() then return end
+	if !self:GetTurretOwner():InVehicle() then return end
 
 	local td = {}
 		td.start = self.Entity:GetAttachment(1).Pos

@@ -10,6 +10,29 @@ include("sv_interact.lua")
 include("sv_remove.lua")
 include("sv_cube.lua")
 
+function ENT:SpawnFunction( ply, tr )
+
+	if ( !tr.Hit ) then return end
+
+	local SpawnPos = tr.HitPos + tr.HitNormal * 10
+	local SpawnAng = ply:EyeAngles()
+	SpawnAng.p = 0
+	SpawnAng.y = SpawnAng.y + 180
+
+	local ent = ents.Create( self.Turret )
+		ent:SetCreator( ply )
+		ent:SetPos( SpawnPos )
+		ent:SetAngles( SpawnAng )
+	ent:Spawn()
+	ent:Activate()
+
+	ent:SetTurretOwner( ply )
+
+	ent:DropToFloor()
+
+	return ent
+end
+
 /*---------------------------------------------------------
    Name: Initialize
 ---------------------------------------------------------*/

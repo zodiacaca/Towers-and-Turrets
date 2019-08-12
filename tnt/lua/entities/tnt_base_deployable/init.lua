@@ -78,6 +78,8 @@ function ENT:SpawnFunction(ply, tr)
 	ent:Spawn()
 	ent:Activate()
 
+	ent:SetTurretOwner(ply)
+
 	return ent
 end
 
