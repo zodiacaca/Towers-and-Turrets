@@ -1,6 +1,6 @@
 
 /*---------------------------------------------------------
-Name: OnTakeDamage
+	Name: OnTakeDamage
 ---------------------------------------------------------*/
 function ENT:OnTakeDamage(dmginfo)
 

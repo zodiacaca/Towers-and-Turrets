@@ -27,23 +27,6 @@ function ENT:Draw()
 
 end
 
-function ENT:Calibration()
-
---[[ 	These codes below help you to calibrate the barrel.
-	Forward direction is where the x axis aims in local.
-	You should use local coordinates to adjust the attachment position too. ]]
-
-	local td = {}
-		td.start = self.Entity:GetAttachment(1).Pos
-		td.endpos = self.Entity:GetAttachment(1).Pos + self.Entity:GetAttachment(1).Ang:Forward() * 10000
-		td.filter = { self.Entity }
-	local tr = util.TraceLine(td)
-
-	render.SetMaterial(Material("cable/redlaser"))
-	render.DrawBeam(self.Entity:GetAttachment(1).Pos, tr.HitPos, 10, 0, 1, Color(255, 255, 255, 255))
-
-end
-
 function ENT:Display()
 
 	local display = {
