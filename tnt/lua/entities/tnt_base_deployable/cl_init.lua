@@ -2,7 +2,6 @@
 include("shared.lua")
 
 surface.CreateFont("TNT_Font", {
-	font = "tnt_bankgothicmb",
 	size = 72,
 	weight = 0,
 	blursize = 0,

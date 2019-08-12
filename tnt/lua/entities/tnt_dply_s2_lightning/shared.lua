@@ -10,7 +10,6 @@ ENT.AutomaticFrameAdvance = false
 
 ENT.Turret = "tnt_dply_s2_lightning"
 ENT.TurretModel = "models/tnt/lightning_lv3.mdl"
-ENT.HasBase = true
 ENT.TurretIdleSound = Sound("S2_Lightning.Idle")
 
 ENT.AimAttachment = 1

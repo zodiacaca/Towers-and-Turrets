@@ -12,7 +12,6 @@ ENT.DoNotDuplicate = false
 
 ENT.Turret = "tnt_dply_s2_cannon"
 ENT.TurretModel = "models/tnt/cannon_lv3.mdl"
-ENT.HasBase = true
 ENT.TurretIdleSound = nil
 ENT.TurretTurningSound = Sound("TNT_Turret.Turning")
 ENT.TurretShootSound = Sound("tnt/cannon/tnt_cannon_fire1.wav")

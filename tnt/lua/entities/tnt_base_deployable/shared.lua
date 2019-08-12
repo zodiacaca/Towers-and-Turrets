@@ -12,6 +12,7 @@ ENT.DoNotDuplicate = false
 
 ENT.Turret = ""
 ENT.TurretModel = ""
+ENT.HasBase = true
 ENT.TurretIdleSound = nil
 ENT.TurretTurningSound = Sound("TNT_Turret.Turning")
 ENT.TurretShootSound = ""
