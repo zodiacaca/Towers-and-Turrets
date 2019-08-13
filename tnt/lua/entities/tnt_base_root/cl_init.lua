@@ -3,7 +3,7 @@ include("shared.lua")
 
 function ENT:Calibration()
 
---[[ 	These codes below help you to calibrate the barrel.
+  --[[ 	These codes below help you to calibrate the barrel.
   Forward direction is where the x axis aims in local.
   You should use local coordinates to adjust the attachment position too. ]]
 

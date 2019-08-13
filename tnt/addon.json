@@ -1,6 +1,6 @@
 {
 	"title"		:	"Towers & Turrets",
-	"type"		:	"npc",
+	"type"		:	"entity",
 	"tags"		:	[ "fun", "realism" ],
 	"ignore"	:
 	[
