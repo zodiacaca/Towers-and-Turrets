@@ -71,19 +71,19 @@ function TOOL:RightClick( trace )
 		local taps  = trace.Entity.TakeAmmoPerShoot
 		local ready  = tostring(trace.Entity:GetReady())
 
-		self:GetTurretOwner():ChatPrint( "Turret Ready is "..ready.."" )
-		self:GetTurretOwner():ChatPrint( "Damage Scale: "..ds.."" )
-		self:GetTurretOwner():ChatPrint( "Spread(*10): "..s.."" )
-		self:GetTurretOwner():ChatPrint( "Range: "..r.."" )
-		self:GetTurretOwner():ChatPrint( "Cooldown: "..cd.."" )
-		self:GetTurretOwner():ChatPrint( "Blast Radius: "..br.."" )
-		self:GetTurretOwner():ChatPrint( "Take Ammo Per Shoot: "..taps.."" )
-		self:GetTurretOwner():ConCommand( "tnt_tus_scale "..ds )
-		self:GetTurretOwner():ConCommand( "tnt_tus_spread "..s )
-		self:GetTurretOwner():ConCommand( "tnt_tus_range "..r )
-		self:GetTurretOwner():ConCommand( "tnt_tus_cooldown "..cd )
-		self:GetTurretOwner():ConCommand( "tnt_tus_br "..br )
-		self:GetTurretOwner():ConCommand( "tnt_tu_taps "..taps )
+		trace.Entity:GetTurretOwner():ChatPrint( "Turret Ready is "..ready.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Damage Scale: "..ds.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Spread(*10): "..s.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Range: "..r.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Cooldown: "..cd.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Blast Radius: "..br.."" )
+		trace.Entity:GetTurretOwner():ChatPrint( "Take Ammo Per Shoot: "..taps.."" )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tus_scale "..ds )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tus_spread "..s )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tus_range "..r )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tus_cooldown "..cd )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tus_br "..br )
+		trace.Entity:GetTurretOwner():ConCommand( "tnt_tu_taps "..taps )
 
 		return true
 
@@ -97,7 +97,7 @@ function TOOL:Reload( trace )
 
 	if ( SERVER ) then
 
-		if self:GetTurretOwner():KeyDown(IN_USE) then
+		if trace.Entity:GetTurretOwner():KeyDown(IN_USE) then
 
 			for k,v in pairs(ents.GetAll()) do
 				if v.Base == "tnt_base_deployable" or v.Base == "tnt_base_controlable" or v.Base == "tnt_base_attachable" then
