@@ -136,7 +136,7 @@ function ENT:TurningTurret(ct)
 		if math.abs(as.y) <= self.MinTheta.y then
 			as.y = self.YawMotorThrottle * self.RotateSpeed
 			if self.p_AngularSpeed.y != 0 then
-				as.y = math.min(as.y, math.abs(self.p_AngularSpeed.y) + self.RotateSpeed / 7.5)
+				as.y = math.min(as.y, math.abs(self.p_AngularSpeed.y) + self.RotateSpeed / 5)
 			end
 		else
 			if math.abs(as.y) > 180 then
