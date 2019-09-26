@@ -22,28 +22,28 @@ function ENT:EjectCasing(p, a)
 			ShellEject:SetOrigin(p + a:Forward() * self.EjectOffset)
 			ShellEject:SetAngles(a + Angle(60, -120, 0))
 		util.Effect(self.EjectEffect, ShellEject)
-	end
 
-	local ent = ents.Create( "tnt_linkbelt" )
-	if ( IsValid( ent ) ) then
-		ent:SetPos( p + a:Forward() * self.EjectOffset + a:Right() * 2)
-		ent:SetAngles( a + Angle(0, 0, 0) )
-		ent:Spawn()
-		ent:Activate()
+		local ent = ents.Create( "tnt_linkbelt" )
+		if ( IsValid( ent ) ) then
+			ent:SetPos( p + a:Forward() * self.EjectOffset + a:Right() * 2)
+			ent:SetAngles( a + Angle(0, 0, 0) )
+			ent:Spawn()
+			ent:Activate()
 
-		local phys = ent:GetPhysicsObject()
-		if ( IsValid( phys ) ) then
-			phys:Wake() phys:AddAngleVelocity( Vector(math.Rand(-5,5), math.Rand(85,120), math.Rand(-45,45)) )
-			phys:Wake() phys:AddVelocity( ent:GetRight() * 50 * math.Rand(0.6,1.4) )
+			local phys = ent:GetPhysicsObject()
+			if ( IsValid( phys ) ) then
+				phys:Wake() phys:AddAngleVelocity( Vector(math.Rand(-5,5), math.Rand(85,120), math.Rand(-45,45)) )
+				phys:Wake() phys:AddVelocity( ent:GetRight() * 50 * math.Rand(0.6,1.4) )
+			end
 		end
-	end
 
-	local Eject_FX = EffectData()
-		Eject_FX:SetEntity(self.Entity)
-		Eject_FX:SetOrigin(p + a:Forward() * self.EjectOffset)
-		Eject_FX:SetNormal(a:Right())
-		Eject_FX:SetScale(self.MuzzleScale)
-		Eject_FX:SetAttachment(self.AimAttachment)
-	util.Effect("gdcw_tnt_muzzle_m60_side", Eject_FX)
+		local Eject_FX = EffectData()
+			Eject_FX:SetEntity(self.Entity)
+			Eject_FX:SetOrigin(p + a:Forward() * self.EjectOffset)
+			Eject_FX:SetNormal(a:Right())
+			Eject_FX:SetScale(self.MuzzleScale)
+			Eject_FX:SetAttachment(self.AimAttachment)
+		util.Effect("gdcw_tnt_muzzle_m60_side", Eject_FX)
+	end
 
 end

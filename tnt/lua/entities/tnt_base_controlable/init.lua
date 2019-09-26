@@ -18,17 +18,15 @@ end
 
 function ENT:InitMeta()
 
-	self.YawBoneIndex = nil
+	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	self.YawBonePos = nil
 	self.YawBoneAng = nil
-	self.PitchBoneIndex = nil
+	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
 	self.PitchBonePos = nil
 	self.PitchBoneAng = nil
-
-	self.YawBonePos_w = nil
-	self.YawBoneAng_w = nil
-	self.PitchBonePos_w = nil
-	self.PitchBoneAng_w = nil
+	self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	self.ExPitchBonePos = Vector(0, 0, 0)
+	self.ExPitchBoneAng = Angle(0, 0, 0)
 
 	self.AngularSpeed = Angle(0, 0, 0)
 	self.PitchSpeed = Angle(0, 0, 0)
@@ -64,11 +62,15 @@ end
 function ENT:UpdateTransformation()
 
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
-	self.YawBonePos_w, self.YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
+	local YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
 	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
-	self.PitchBonePos_w, self.PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
-	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(self.YawBonePos_w, self.YawBoneAng_w)
+	local PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
+	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
 	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(self.PitchBonePos_w, self.PitchBoneAng_w)
+	if self.ExPitchBone != nil then
+		local ExPitchBonePos_w, ExPitchBoneAng_w = self.Entity:GetBonePosition(self.ExPitchBoneIndex)
+		self.ExPitchBonePos, self.ExPitchBoneAng = self:TranslateCoordinateSystem(ExPitchBonePos_w, ExPitchBoneAng_w)
+	end
 
 	self.AngularSpeed = self.YawBoneAng - self.p_YawBoneAng
 	self.PitchSpeed = self.PitchBoneAng - self.p_PitchBoneAng
@@ -173,7 +175,10 @@ function ENT:TurningTurret(ct)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, self.YawBoneAng.y - self.ExistAngle + self.YawDiff.y, 0))
-		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x, 0, 0))
+		if self.ExPitchBoneIndex != nil then
+			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + self.PitchDiff.x * 0.5, 0, 0))
+		end
+		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
 
 		-- self:TurningSound(ct)
 		self:Aiming(ct)

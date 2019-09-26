@@ -46,6 +46,7 @@ ENT.EjectOffset = 0
 
 ENT.AimYawBone = "Slave_Main"
 ENT.AimPitchBone = "Slave_Rotation_Upper"	-- These two bones can be the same bone or different like this one
+ENT.ExPitchBone = "Slave_Rotation_Lower"
 ENT.AimHeight = 45	-- The height of the gun
 ENT.YawLimitLeft = 0
 ENT.YawLimitRight = 0

@@ -73,7 +73,7 @@ function ENT:GetTargetA()
 
 end
 
-function ENT:Shoot(ct)
+function ENT:Shoot(ct, t)
 
 	if (self:GetRounds() >= self.TakeAmmoPerShoot) then
 

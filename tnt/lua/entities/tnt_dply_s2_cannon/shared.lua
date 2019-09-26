@@ -44,6 +44,7 @@ ENT.Cooldown = 0.75
 
 ENT.AimYawBone = "Slave_Main"
 ENT.AimPitchBone = "Slave_Rotation_Upper"	-- These two bones can be the same bone or different like this one
+ENT.ExPitchBone = "Slave_Rotation_Lower"
 ENT.AimHeight = 128	-- The height of the gun
 ENT.YawLimitLeft = 0
 ENT.YawLimitRight = 0
@@ -55,6 +56,7 @@ ENT.RecoilBoneAdditional_1 = "Slave_Barrel_L"
 ENT.RecoilBoneAdditional_2 = "Slave_Barrel_R"
 
 ENT.RotateSpeed = 8
+ENT.RotateSpeedRatio = 0.75
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort = 0.5

@@ -136,14 +136,20 @@ function ENT:SetFriends( friend )
 	table.insert(tntfriends, string.lower(friend))
 end
 
-local YawBoneIndex, YawBonePos, YawBoneAng, PitchBoneIndex, PitchBonePos, PitchBoneAng, TargetBoneIndex
-local YawBonePos_w, YawBoneAng_w, PitchBonePos_w, PitchBoneAng_w
+local YawBonePos, YawBoneAng, PitchBonePos, PitchBoneAng, TargetBoneIndex
 local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local AttPos, AttAng
 local recoil, back
 
 function ENT:InitMeta()
+
+	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
+	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
+
+	self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	self.ExPitchBonePos = Vector(0, 0, 0)
+	self.ExPitchBoneAng = Angle(0, 0, 0)
 
 	self.YawClampDelta = nil
 	self.PitchClampDelta = nil
@@ -200,12 +206,14 @@ end
 
 function ENT:UpdateTransformation()
 
-	YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
-	YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(YawBoneIndex)
-	PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
-	PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(PitchBoneIndex)
+	local YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
+	local PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
 	YawBonePos, YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
 	PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
+	if self.ExPitchBone != nil then
+		local ExPitchBonePos_w, ExPitchBoneAng_w = self.Entity:GetBonePosition(self.ExPitchBoneIndex)
+		self.ExPitchBonePos, self.ExPitchBoneAng = self:TranslateCoordinateSystem(ExPitchBonePos_w, ExPitchBoneAng_w)
+	end
 
 	self.AngularSpeed = YawBoneAng - self.p_YawBoneAng
 	self.PitchSpeed = PitchBoneAng - self.p_PitchBoneAng
@@ -339,8 +347,11 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
-		self.Entity:ManipulateBoneAngles(PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x, 0, 0))
+		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
+		if self.ExPitchBoneIndex != nil then
+			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + PitchDiff.x * 0.5, 0, 0))
+		end
+		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
 		-- print(PitchDiff.x)
 		self:TurningSound()
 		self:Aiming(ct)

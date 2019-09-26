@@ -139,16 +139,24 @@ function ENT:Recoil(ct)
 	RecoilBoneIndex = self.Entity:LookupBone(self.RecoilBone)
 	RecoilBonePos, RecoilBoneAng = self.Entity:GetBonePosition(RecoilBoneIndex)
 
-	recoil = (ct - self.LastShoot) * self.RecoilOffset
-	back = (self.RecoilOffset * 1/self.RecoilRecoverPerThink) - (ct - self.LastShoot - 1/self.RecoilRecoverPerThink) * (0.5 * self.RecoilOffset)
+  local TimeCount = ct - self.LastShoot
+  local BaseTime = 1 / self.RecoilRecoverPerThink
+  local MovementTime = 3 * BaseTime
+	recoil = TimeCount * self.RecoilOffset
+	back = (self.RecoilOffset * BaseTime) - (TimeCount - BaseTime) * (0.5 * self.RecoilOffset)
 
-	if (ct - self.LastShoot) < (3 * 1/self.RecoilRecoverPerThink) then
-		if (ct - self.LastShoot) < 1/self.RecoilRecoverPerThink then
+	if TimeCount < MovementTime then
+		if TimeCount < BaseTime then
 			self.Entity:ManipulateBonePosition(RecoilBoneIndex, Vector(-recoil, 0, 0))
 		else
 			self.Entity:ManipulateBonePosition(RecoilBoneIndex, Vector(-back, 0, 0))
-		end
-	end
+    end
+    -- insert here, less calculation
+    if self.ExPitchBone != nil then
+      local sway = -math.cos(TimeCount * 20) * 0.5 * (MovementTime - TimeCount)
+      self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.ExPitchBone), Angle(self.ExPitchBoneAng.x + sway, 0, 0))
+    end
+  end
 
 end
 
