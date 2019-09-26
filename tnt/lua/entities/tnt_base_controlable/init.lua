@@ -18,6 +18,8 @@ end
 
 function ENT:InitMeta()
 
+	self.Flipper = 1
+
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	self.YawBonePos = nil
 	self.YawBoneAng = nil
@@ -61,12 +63,14 @@ end
 
 function ENT:UpdateTransformation()
 
+	self.Flipper = self.Flipper * -1
+
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	local YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
 	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
 	local PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
 	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
-	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(self.PitchBonePos_w, self.PitchBoneAng_w)
+	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
 	if self.ExPitchBone != nil then
 		local ExPitchBonePos_w, ExPitchBoneAng_w = self.Entity:GetBonePosition(self.ExPitchBoneIndex)
 		self.ExPitchBonePos, self.ExPitchBoneAng = self:TranslateCoordinateSystem(ExPitchBonePos_w, ExPitchBoneAng_w)
@@ -175,10 +179,13 @@ function ENT:TurningTurret(ct)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, self.YawBoneAng.y - self.ExistAngle + self.YawDiff.y, 0))
-		if self.ExPitchBoneIndex != nil then
-			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + self.PitchDiff.x * 0.5, 0, 0))
+		if self.ExPitchBoneIndex != nil and self.Flipper == -1 then
+			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + self.PitchDiff.x, 0, 0))
 		end
-		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
+		-- if self.Flipper == 1 or self.ExPitchBoneIndex == nil then
+			self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
+		-- end
+		-- print(self.PitchBoneAng.x, self.ExPitchBoneAng.x)
 
 		-- self:TurningSound(ct)
 		self:Aiming(ct)
