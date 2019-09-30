@@ -56,7 +56,8 @@ ENT.ExistAngle = 90	-- It's 90 in this model
 ENT.RecoilBone = nil
 
 ENT.RotateSpeed = 3.5
-ENT.RotateSpeedRatio = 0.75
+ENT.RotateSpeedRatio = 0.6
+ENT.ExPitchWeight = 0.9
 ENT.ReloadSpeed = 0.1
 
 ENT.RecoilOffset = 80

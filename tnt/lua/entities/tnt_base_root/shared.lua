@@ -49,6 +49,7 @@ ENT.EjectOffset = 0
 
 ENT.AimYawBone = ""
 ENT.AimPitchBone = ""	-- These two bones can be the same bone or different like this one
+ENT.ExPitchBone = nil
 ENT.AimHeight = 128	-- The height of the gun
 ENT.YawLimitLeft = 0
 ENT.YawLimitRight = 0
@@ -59,6 +60,7 @@ ENT.RecoilBone = nil
 
 ENT.RotateSpeed = 35
 ENT.RotateSpeedRatio = 0.75
+ENT.ExPitchWeight = 0
 ENT.ReloadSpeed = 0.135
 ENT.UpdateDelayLong = 4
 ENT.UpdateDelayShort = 0.5

@@ -152,9 +152,9 @@ function ENT:Recoil(ct)
 			self.Entity:ManipulateBonePosition(RecoilBoneIndex, Vector(-back, 0, 0))
     end
     -- insert here, less calculation
-    if self.ExPitchBone != nil then
-      local sway = -math.cos(TimeCount * 20) * 0.5 * (MovementTime - TimeCount)
-      self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.ExPitchBone), Angle(self.ExPitchBoneAng.x + sway, 0, 0))
+		if self.ExPitchBone != nil then
+			local sway = -math.cos(TimeCount * 30) * 1.5 * (MovementTime - TimeCount)
+      self.Entity:ManipulateBoneAngles(self.Entity:LookupBone(self.ExPitchBone), Angle((self.PitchBoneAng.x - self.ExPitchBoneAng.x) * self.ExPitchWeight + sway, 0, 0))
     end
   end
 

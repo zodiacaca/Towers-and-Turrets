@@ -136,7 +136,7 @@ function ENT:SetFriends( friend )
 	table.insert(tntfriends, string.lower(friend))
 end
 
-local YawBonePos, YawBoneAng, PitchBonePos, PitchBoneAng, TargetBoneIndex
+local TargetBoneIndex
 local AimPosition_w, AimAngle_w, AimPosition, AimAngle, AngleAimYaw, AngleAimPitch, YawDiff, PitchDiff, newpos, newang
 local RecoilBoneIndex, RecoilBonePos, RecoilBoneAng
 local AttPos, AttAng
@@ -147,7 +147,14 @@ function ENT:InitMeta()
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
 
-	self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	self.YawBonePos= Vector(0, 0, 0)
+	self.YawBoneAng = Angle(0, 0, 0)
+	self.PitchBonePos= Vector(0, 0, 0)
+	self.PitchBoneAng = Angle(0, 0, 0)
+
+	if self.ExPitchBone != nil then
+		self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	end
 	self.ExPitchBonePos = Vector(0, 0, 0)
 	self.ExPitchBoneAng = Angle(0, 0, 0)
 
@@ -208,22 +215,22 @@ function ENT:UpdateTransformation()
 
 	local YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
 	local PitchBonePos_w, PitchBoneAng_w = self.Entity:GetBonePosition(self.PitchBoneIndex)
-	YawBonePos, YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
-	PitchBonePos, PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
+	self.YawBonePos, self.YawBoneAng = self:TranslateCoordinateSystem(YawBonePos_w, YawBoneAng_w)
+	self.PitchBonePos, self.PitchBoneAng = self:TranslateCoordinateSystem(PitchBonePos_w, PitchBoneAng_w)
 	if self.ExPitchBone != nil then
 		local ExPitchBonePos_w, ExPitchBoneAng_w = self.Entity:GetBonePosition(self.ExPitchBoneIndex)
 		self.ExPitchBonePos, self.ExPitchBoneAng = self:TranslateCoordinateSystem(ExPitchBonePos_w, ExPitchBoneAng_w)
 	end
 
-	self.AngularSpeed = YawBoneAng - self.p_YawBoneAng
-	self.PitchSpeed = PitchBoneAng - self.p_PitchBoneAng
+	self.AngularSpeed = self.YawBoneAng - self.p_YawBoneAng
+	self.PitchSpeed = self.PitchBoneAng - self.p_PitchBoneAng
 
 end
 
 function ENT:PostTransformation()
 
-	self.p_YawBoneAng = YawBoneAng
-	self.p_PitchBoneAng = PitchBoneAng
+	self.p_YawBoneAng = self.YawBoneAng
+	self.p_PitchBoneAng = self.PitchBoneAng
 	self.p_AngularSpeed = self.AngularSpeed
 	self.p_PitchSpeed = self.PitchSpeed
 
@@ -265,8 +272,8 @@ function ENT:TurningTurret(ct)
 		end
 		AimPosition_w, AimAngle_w = self.Target:GetBonePosition(TargetBoneIndex)
 		AimPosition, AimAngle = self:TranslateCoordinateSystem(AimPosition_w, AimAngle_w)
-		AngleAimYaw = (AimPosition - YawBonePos):Angle()
-		AngleAimPitch = (AimPosition - PitchBonePos):Angle()
+		AngleAimYaw = (AimPosition - self.YawBonePos):Angle()
+		AngleAimPitch = (AimPosition - self.PitchBonePos):Angle()
 		if AngleAimPitch.x >= self.PitchLimitDown && AngleAimPitch.x <= self.PitchLimitUp then
 			if self.TurningLoop then
 				self.TurningLoop:Stop()
@@ -276,8 +283,8 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- The angle differences between them
-		YawDiff = AngleAimYaw - YawBoneAng
-		PitchDiff = AngleAimPitch - PitchBoneAng
+		YawDiff = AngleAimYaw - self.YawBoneAng
+		PitchDiff = AngleAimPitch - self.PitchBoneAng
 
 		-- Make sure the turret don't turn like a maniac
 		if math.abs(YawDiff.y) > 180 then
@@ -347,11 +354,12 @@ function ENT:TurningTurret(ct)
 		end
 
 		-- Turning
-		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
+		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, self.YawBoneAng.y - self.ExistAngle + YawDiff.y, 0))
+		local TotalPitchWeight = 1 + self.ExPitchWeight
 		if self.ExPitchBoneIndex != nil then
-			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + PitchDiff.x * 0.5, 0, 0))
+			self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + PitchDiff.x * self.ExPitchWeight / TotalPitchWeight, 0, 0))
 		end
-		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(PitchBoneAng.x + PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
+		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + PitchDiff.x / TotalPitchWeight - self.ExPitchBoneAng.x, 0, 0))
 		-- print(PitchDiff.x)
 		self:TurningSound()
 		self:Aiming(ct)

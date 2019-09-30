@@ -18,15 +18,15 @@ end
 
 function ENT:InitMeta()
 
-	self.Flipper = 1
-
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	self.YawBonePos = nil
 	self.YawBoneAng = nil
 	self.PitchBoneIndex = self.Entity:LookupBone(self.AimPitchBone)
 	self.PitchBonePos = nil
 	self.PitchBoneAng = nil
-	self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	if self.ExPitchBone != nil then
+		self.ExPitchBoneIndex = self.Entity:LookupBone(self.ExPitchBone)
+	end
 	self.ExPitchBonePos = Vector(0, 0, 0)
 	self.ExPitchBoneAng = Angle(0, 0, 0)
 
@@ -62,8 +62,6 @@ function ENT:InitMeta()
 end
 
 function ENT:UpdateTransformation()
-
-	self.Flipper = self.Flipper * -1
 
 	self.YawBoneIndex = self.Entity:LookupBone(self.AimYawBone)
 	local YawBonePos_w, YawBoneAng_w = self.Entity:GetBonePosition(self.YawBoneIndex)
@@ -179,12 +177,11 @@ function ENT:TurningTurret(ct)
 
 		-- Turning
 		self.Entity:ManipulateBoneAngles(self.YawBoneIndex, Angle(0, self.YawBoneAng.y - self.ExistAngle + self.YawDiff.y, 0))
-		if self.ExPitchBoneIndex != nil and self.Flipper == -1 then
-			-- self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + self.PitchDiff.x, 0, 0))
+		local TotalPitchWeight = 1 + self.ExPitchWeight
+		if self.ExPitchBoneIndex != nil then
+			self.Entity:ManipulateBoneAngles(self.ExPitchBoneIndex, Angle(self.ExPitchBoneAng.x + self.PitchDiff.x * self.ExPitchWeight / TotalPitchWeight, 0, 0))
 		end
-		-- if self.Flipper == 1 or self.ExPitchBoneIndex == nil then
-			self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x - self.ExPitchBoneAng.x, 0, 0))
-		-- end
+		self.Entity:ManipulateBoneAngles(self.PitchBoneIndex, Angle(self.PitchBoneAng.x + self.PitchDiff.x / TotalPitchWeight - self.ExPitchBoneAng.x, 0, 0))
 		-- print(self.PitchBoneAng.x, self.ExPitchBoneAng.x)
 
 		-- self:TurningSound(ct)
