@@ -26,7 +26,8 @@ tntfriends = {
 	"npc_gman",
 	"npc_dog",
 	"npc_magnusson",
-	"npc_vortigaunt"
+	"npc_vortigaunt",
+	"tnt_npc_cube"
 	}
 
 tntfilter = {

@@ -20,6 +20,8 @@ function ENT:RotateNPCCube(ct)
 		local theta = ct * 2 * math.pi / self.NPCCubeCycle
 		self.NPCCube:SetPos( self:GetPos() + self:GetForward() * self.NPCCubeRadius * math.cos(theta) + self:GetRight() * self.NPCCubeRadius * math.sin(theta) + self:GetUp() * self.NPCCubeOffset )
 		local ang = Angle( self:GetAngles().x, self:GetAngles().y, self:GetAngles().z )
+		ang:RotateAroundAxis( self:GetForward(), 45 )
+		ang:RotateAroundAxis( self:GetRight(), 45 )
 		ang:RotateAroundAxis( self:GetUp(), ct * 360 * 2 / self.NPCCubeCycle )
 		self.NPCCube:SetAngles( ang )
 	end
